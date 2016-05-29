@@ -1,9 +1,11 @@
 package org.irenical.drowsy;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -11,14 +13,31 @@ import java.util.LinkedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DrowsyConnection {
+public class DrowsyConnection implements InvocationHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(DrowsyConnection.class);
 
-  private final InvocationHandler handler = new InvocationHandler() {
+  private final Collection<Statement> statements;
 
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+  private final Connection connection;
+
+  private DrowsyConnection(Connection connection) {
+    this.connection = connection;
+    this.statements = new LinkedList<>();
+  }
+
+  public static Connection wrap(Connection connection) {
+    if (Proxy.isProxyClass(connection.getClass())
+      && Proxy.getInvocationHandler(connection) instanceof DrowsyConnection) {
+        return connection;
+    }
+    DrowsyConnection proxy = new DrowsyConnection(connection);
+    return (Connection) Proxy.newProxyInstance(DrowsyConnection.class.getClassLoader(), new Class[] { Connection.class }, proxy);
+  }
+  
+  @Override
+  public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    try {
       if ("close".equals(method.getName())) {
         for (Statement stmt : statements) {
           try {
@@ -36,24 +55,13 @@ public class DrowsyConnection {
       }
 
       return ret;
+    } catch (InvocationTargetException ex) {
+      if (ex.getCause() instanceof SQLException) {
+        throw ex.getCause();
+      } else {
+        throw ex;
+      }
     }
-  };
-
-  private final Collection<Statement> statements;
-
-  private final Connection connection;
-
-  private DrowsyConnection(Connection connection) {
-    this.connection = connection;
-    this.statements = new LinkedList<>();
-  }
-
-  public static Connection wrap(Connection connection) {
-    if (connection instanceof DrowsyConnection) {
-      return connection;
-    }
-    DrowsyConnection proxy = new DrowsyConnection(connection);
-    return (Connection) Proxy.newProxyInstance(DrowsyConnection.class.getClassLoader(), new Class[] { Connection.class }, proxy.handler);
   }
 
 }
