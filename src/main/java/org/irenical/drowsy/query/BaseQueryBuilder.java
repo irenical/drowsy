@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.irenical.drowsy.query.Query.TYPE;
+
 public abstract class BaseQueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDER_CLASS>>
     implements QueryBuilder<BUILDER_CLASS> {
 
@@ -13,14 +15,18 @@ public abstract class BaseQueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDE
 
   private final StringBuilder sb = new StringBuilder();
 
-  public BaseQueryBuilder() {
+  private final TYPE type;
+  
+  public BaseQueryBuilder(TYPE type) {
+    this.type = type;
   }
-
+  
   @Override
   public Query build() {
     BaseQuery result = new BaseQuery();
     result.setParameters(new LinkedList<>(parameters));
     result.setQuery(sb.toString());
+    result.setType(type);
     return result;
   }
 
