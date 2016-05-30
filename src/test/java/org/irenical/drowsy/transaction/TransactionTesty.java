@@ -1,65 +1,18 @@
-package org.irenical.drowsy;
+package org.irenical.drowsy.transaction;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.junit.AfterClass;
+import org.irenical.drowsy.PGTestUtils;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import ru.yandex.qatools.embed.postgresql.PostgresExecutable;
-import ru.yandex.qatools.embed.postgresql.PostgresProcess;
-import ru.yandex.qatools.embed.postgresql.PostgresStarter;
-import ru.yandex.qatools.embed.postgresql.config.PostgresConfig;
-
-public class DrowsyTesty {
-
-  private static PostgresConfig postgresConfig;
-  private static PostgresProcess postgresProcess;
-
-  private static Connection createConnection(boolean autocommit) throws SQLException, IOException {
-    String user = System.getProperty("user.name");
-    String url = String.format("jdbc:postgresql://%s:%s/%s?user=%s&password=%s", postgresConfig.net().host(), postgresConfig.net().port(), postgresConfig.storage().dbName(), user, null);
-    Connection connection = DriverManager.getConnection(url);
-    connection.setAutoCommit(autocommit);
-    return connection;
-  }
-
-  @BeforeClass
-  public static void init() throws ClassNotFoundException, SQLException, IOException {
-    Class.forName("org.postgresql.Driver");
-    PostgresStarter<PostgresExecutable, PostgresProcess> runtime = PostgresStarter.getDefaultInstance();
-    postgresConfig = PostgresConfig.defaultWithDbName("test");
-    PostgresExecutable exec = runtime.prepare(postgresConfig);
-    postgresProcess = exec.start();
-
-    Connection connection = createConnection(false);
-
-    // create table
-    PreparedStatement createPeopleTableStatement = connection.prepareStatement("create table people (id serial primary key, name text)");
-    createPeopleTableStatement.executeUpdate();
-    createPeopleTableStatement.close();
-
-    // create data
-    PreparedStatement createPersonStatement = connection.prepareStatement("insert into people(name) values('Boda')");
-    createPersonStatement.executeUpdate();
-    createPersonStatement.close();
-
-    connection.commit();
-    connection.close();
-  }
-
-  @AfterClass
-  public static void shutdown() {
-    postgresProcess.stop();
-  }
+public class TransactionTesty extends PGTestUtils {
 
   @Test(expected = IllegalArgumentException.class)
   public void testNoConnectionTransaction() throws SQLException {

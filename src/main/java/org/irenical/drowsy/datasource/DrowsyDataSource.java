@@ -25,7 +25,7 @@ import com.zaxxer.hikari.pool.HikariPool;
  * Configuration is done by the current Jindy binding.
  * <h3>DataSource configuration:</h3> As described in
  * https://github.com/brettwooldridge/HikariCP<br>
- * Prefixed with jdbc (ex: jdbc.username, jdbc.password, jdbc.jdbcUrl, etc...)
+ * Prefixed with jdbc by default (ex: jdbc.username, jdbc.password, jdbc.jdbcUrl, etc...)
  * <br>
  * <h3>FlyWay configuration:</h3> flyway.bypass - whether to bypass flyway
  * [optional,default=false]<br>
@@ -36,29 +36,29 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DrowsyDataSource.class);
 
-  private static String DATASOURCECLASSNAME = "jdbc.dataSourceClassName";
-  private static String JDBCURL = "jdbc.jdbcUrl";
-  private static String USERNAME = "jdbc.username";
-  private static String PASSWORD = "jdbc.password";
-  private static String AUTOCOMMIT = "jdbc.autoCommit";
-  private static String CONNECTIONTIMEOUT = "jdbc.connectionTimeout";
-  private static String IDLETIMEOUT = "jdbc.idleTimeout";
-  private static String MAXLIFETIME = "jdbc.maxLifetime";
-  private static String CONNECTIONTESTQUERY = "jdbc.connectionTestQuery";
-  private static String MINIMUMIDLE = "jdbc.minimumIdle";
-  private static String MAXIMUMPOOLSIZE = "jdbc.maximumPoolSize";
-  private static String POOLNAME = "jdbc.poolName";
-  private static String INITIALIZATIONFAILFAST = "jdbc.initializationFailFast";
-  private static String ISOLATEINTERNALQUERIES = "jdbc.isolateInternalQueries";
-  private static String ALLOWPOOLSUSPENSION = "jdbc.allowPoolSuspension";
-  private static String READONLY = "jdbc.readOnly";
-  private static String REGISTERMBEANS = "jdbc.registerMbeans";
-  private static String CATALOG = "jdbc.catalog";
-  private static String CONNECTIONINITSQL = "jdbc.connectionInitSql";
-  private static String DRIVERCLASSNAME = "jdbc.driverClassName";
-  private static String TRANSACTIONISOLATION = "jdbc.transactionIsolation";
-  private static String VALIDATIONTIMEOUT = "jdbc.validationTimeout";
-  private static String LEAKDETECTIONTHRESHOLD = "jdbc.leakDetectionThreshold";
+  private static String DATASOURCECLASSNAME = "dataSourceClassName";
+  private static String JDBCURL = "jdbcUrl";
+  private static String USERNAME = "username";
+  private static String PASSWORD = "password";
+  private static String AUTOCOMMIT = "autoCommit";
+  private static String CONNECTIONTIMEOUT = "connectionTimeout";
+  private static String IDLETIMEOUT = "idleTimeout";
+  private static String MAXLIFETIME = "maxLifetime";
+  private static String CONNECTIONTESTQUERY = "connectionTestQuery";
+  private static String MINIMUMIDLE = "minimumIdle";
+  private static String MAXIMUMPOOLSIZE = "maximumPoolSize";
+  private static String POOLNAME = "poolName";
+  private static String INITIALIZATIONFAILFAST = "initializationFailFast";
+  private static String ISOLATEINTERNALQUERIES = "isolateInternalQueries";
+  private static String ALLOWPOOLSUSPENSION = "allowPoolSuspension";
+  private static String READONLY = "readOnly";
+  private static String REGISTERMBEANS = "registerMbeans";
+  private static String CATALOG = "catalog";
+  private static String CONNECTIONINITSQL = "connectionInitSql";
+  private static String DRIVERCLASSNAME = "driverClassName";
+  private static String TRANSACTIONISOLATION = "transactionIsolation";
+  private static String VALIDATIONTIMEOUT = "validationTimeout";
+  private static String LEAKDETECTIONTHRESHOLD = "leakDetectionThreshold";
 
   private static String FLYWAY_BYPASS = "flyway.bypass";
   private static String FLYWAY_BASELINE_VERSION = "flyway.baselineVersion";
@@ -72,7 +72,7 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
    * as described in this class
    */
   public DrowsyDataSource() {
-    this(null);
+    this("jdbc");
   }
 
   /**
@@ -204,9 +204,9 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
     Flyway flyway = new Flyway();
     flyway.setDataSource(dataSource);
     String baseline = config.getString(FLYWAY_BASELINE_VERSION);
+    flyway.setBaselineOnMigrate(true);
     if (baseline != null) {
       flyway.setBaselineVersionAsString(baseline);
-      flyway.setBaselineOnMigrate(true);
     }
     flyway.migrate();
   }
@@ -217,7 +217,7 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
         POOLNAME, CONNECTIONTESTQUERY, INITIALIZATIONFAILFAST, ISOLATEINTERNALQUERIES,
         ALLOWPOOLSUSPENSION, READONLY, REGISTERMBEANS, CATALOG, CONNECTIONINITSQL, DRIVERCLASSNAME,
         TRANSACTIONISOLATION, LEAKDETECTIONTHRESHOLD, FLYWAY_BYPASS, FLYWAY_BASELINE_VERSION)
-        .stream().forEach(this::addPropertyListener);
+        .stream().forEach(p->config.listen(p, this::onConnectionPropertyChanged));
 
     // hot swappable
     config.listen(MAXIMUMPOOLSIZE,
@@ -228,10 +228,6 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
         () -> dataSource.setMaxLifetime(config.getInt(MAXLIFETIME, 1800000)));
     config.listen(VALIDATIONTIMEOUT,
         () -> dataSource.setValidationTimeout(config.getInt(VALIDATIONTIMEOUT, 5000)));
-  }
-
-  private void addPropertyListener(String property) {
-    config.listen(property, this::onConnectionPropertyChanged);
   }
 
   private void onConnectionPropertyChanged() {

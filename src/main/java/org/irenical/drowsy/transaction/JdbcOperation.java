@@ -1,4 +1,4 @@
-package org.irenical.drowsy;
+package org.irenical.drowsy.transaction;
 
 public abstract class JdbcOperation<OUTPUT> extends JdbcTransaction<OUTPUT> {
 

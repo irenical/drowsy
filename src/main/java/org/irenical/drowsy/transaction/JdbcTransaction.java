@@ -1,4 +1,4 @@
-package org.irenical.drowsy;
+package org.irenical.drowsy.transaction;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,14 +12,19 @@ public abstract class JdbcTransaction<OUTPUT> {
 
   private final Logger LOG = LoggerFactory.getLogger(JdbcTransaction.class);
 
-  private final boolean autoCommit;
+  private final boolean assumeAutoCommit;
 
   public JdbcTransaction() {
     this(false);
   }
 
-  public JdbcTransaction(boolean autoCommit) {
-    this.autoCommit = autoCommit;
+  /**
+   * @param assumeAutoCommit
+   *          - if set to false, JdbcTransaction will handle commit/rollback
+   *          logic
+   */
+  public JdbcTransaction(boolean assumeAutoCommit) {
+    this.assumeAutoCommit = assumeAutoCommit;
   }
 
   protected abstract OUTPUT execute(Connection connection) throws SQLException;
@@ -38,12 +43,12 @@ public abstract class JdbcTransaction<OUTPUT> {
     connection = DrowsyConnection.wrap(connection);
     try {
       OUTPUT result = execute(connection);
-      if (!autoCommit) {
+      if (!assumeAutoCommit) {
         connection.commit();
       }
       return result;
     } catch (SQLException e) {
-      if (!autoCommit) {
+      if (!assumeAutoCommit) {
         LOG.error("Error executing transaction. Raising exception after trying to rollback.");
         try {
           connection.rollback();

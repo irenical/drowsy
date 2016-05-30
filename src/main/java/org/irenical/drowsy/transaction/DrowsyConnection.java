@@ -1,4 +1,4 @@
-package org.irenical.drowsy;
+package org.irenical.drowsy.transaction;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
