@@ -245,5 +245,33 @@ public class DrowsyTesty {
     delete.run(createConnection(true));
     Assert.assertNull(select.run(createConnection(true)));
   }
+  
+  @Test
+  public void testTransactionRollback() throws SQLException, IOException {
+    JdbcTransaction<Integer> insert = new JdbcTransaction<Integer>(){
+      @Override
+      protected Integer execute(Connection connection) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement("insert into people(name) values('Moleman')");
+        ps = connection.prepareStatement("insert onto peepal(neime) valuez('Moleman')");
+        return ps.executeUpdate();
+      }
+    };
+    JdbcOperation<String> select = new JdbcOperation<String>(){
+      @Override
+      protected String execute(Connection connection) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement("select name from people where name=?");
+        ps.setString(1, "Moleman");
+        ResultSet rs = ps.executeQuery();
+        return rs.next() ? rs.getString(1) : null;
+      }
+    };
+    try{
+      insert.run(createConnection(false));
+      Assert.fail();
+    } catch(SQLException e){
+      e.printStackTrace();
+    }
+    Assert.assertNull(select.run(createConnection(true)));
+  }
 
 }

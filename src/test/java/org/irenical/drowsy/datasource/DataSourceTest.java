@@ -2,12 +2,12 @@ package org.irenical.drowsy.datasource;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.irenical.jindy.Config;
 import org.irenical.jindy.ConfigFactory;
 import org.irenical.jindy.ConfigNotFoundException;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -20,14 +20,13 @@ public class DataSourceTest {
 
   private static Config config;
   private static PostgresProcess postgresProcess;
-  private static PostgresConfig postgresConfig;
 
   @BeforeClass
   public static void init() throws ClassNotFoundException, IOException {
     Class.forName("org.postgresql.Driver");
     PostgresStarter<PostgresExecutable, PostgresProcess> runtime = PostgresStarter
         .getDefaultInstance();
-    postgresConfig = PostgresConfig.defaultWithDbName("test");
+    PostgresConfig postgresConfig = PostgresConfig.defaultWithDbName("test");
     PostgresExecutable exec = runtime.prepare(postgresConfig);
     postgresProcess = exec.start();
     config = ConfigFactory.getConfig();
@@ -37,6 +36,11 @@ public class DataSourceTest {
     config.setProperty("jdbc.username", user);
     config.setProperty("jdbc.password", null);
     config.setProperty("jdbc.jdbcUrl", url);
+  }
+  
+  @AfterClass
+  public static void shutdown() {
+    postgresProcess.stop();
   }
 
   @Test
