@@ -14,7 +14,7 @@ public class DrowsyTest extends PGTestUtils {
   public void test() throws InstantiationException, IllegalAccessException, SQLException{
     Drowsy drowsy = new Drowsy();
     drowsy.start();
-    List<LegitPerson> got = drowsy.executeQuery(SQLQueryBuilder.select("* from people").build(), LegitPerson.class);
+    List<LegitPerson> got = drowsy.executeQuery(SQLQueryBuilder.select("select * from people").build(), LegitPerson.class);
     Assert.assertEquals(1, got.size());
     Assert.assertEquals("Boda", got.get(0).getName());
   }
