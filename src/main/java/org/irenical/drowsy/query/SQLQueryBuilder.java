@@ -13,25 +13,25 @@ public class SQLQueryBuilder extends BaseQueryBuilder<SQLQueryBuilder> {
     result.literal(sql);
     return result;
   }
-  
+
   public static SQLQueryBuilder insert(String sql) {
     SQLQueryBuilder result = new SQLQueryBuilder(TYPE.INSERT);
     result.literal(sql);
     return result;
   }
-  
+
   public static SQLQueryBuilder update(String sql) {
     SQLQueryBuilder result = new SQLQueryBuilder(TYPE.UPDATE);
     result.literal(sql);
     return result;
   }
-  
+
   public static SQLQueryBuilder delete(String sql) {
     SQLQueryBuilder result = new SQLQueryBuilder(TYPE.DELETE);
     result.literal(sql);
     return result;
   }
-  
+
   public static SQLQueryBuilder call(String sql) {
     SQLQueryBuilder result = new SQLQueryBuilder(TYPE.CALL);
     result.literal(sql);

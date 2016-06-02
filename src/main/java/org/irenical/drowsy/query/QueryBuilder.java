@@ -1,7 +1,7 @@
 package org.irenical.drowsy.query;
 
 public interface QueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDER_CLASS>> {
-  
+
   /**
    * Returns a built query. The returned Query is a snapshot of the current
    * QueryBuilder state. That is to say that further changes to QueryBuilder

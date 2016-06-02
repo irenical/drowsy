@@ -25,8 +25,8 @@ import com.zaxxer.hikari.pool.HikariPool;
  * Configuration is done by the current Jindy binding.
  * <h3>DataSource configuration:</h3> As described in
  * https://github.com/brettwooldridge/HikariCP<br>
- * Prefixed with jdbc by default (ex: jdbc.username, jdbc.password, jdbc.jdbcUrl, etc...)
- * <br>
+ * Prefixed with jdbc by default (ex: jdbc.username, jdbc.password,
+ * jdbc.jdbcUrl, etc...) <br>
  * <h3>FlyWay configuration:</h3> flyway.bypass - whether to bypass flyway
  * [optional,default=false]<br>
  * flyway.baselineVersion - the baseline version to consider [optional,
@@ -213,11 +213,13 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
 
   private void setupConfigListeners() {
     // require reboot
-    Arrays.asList(DATASOURCECLASSNAME, JDBCURL, USERNAME, PASSWORD, AUTOCOMMIT, CONNECTIONTIMEOUT,
-        POOLNAME, CONNECTIONTESTQUERY, INITIALIZATIONFAILFAST, ISOLATEINTERNALQUERIES,
-        ALLOWPOOLSUSPENSION, READONLY, REGISTERMBEANS, CATALOG, CONNECTIONINITSQL, DRIVERCLASSNAME,
-        TRANSACTIONISOLATION, LEAKDETECTIONTHRESHOLD, FLYWAY_BYPASS, FLYWAY_BASELINE_VERSION)
-        .stream().forEach(p->config.listen(p, this::onConnectionPropertyChanged));
+    Arrays
+        .asList(DATASOURCECLASSNAME, JDBCURL, USERNAME, PASSWORD, AUTOCOMMIT, CONNECTIONTIMEOUT,
+            POOLNAME, CONNECTIONTESTQUERY, INITIALIZATIONFAILFAST, ISOLATEINTERNALQUERIES,
+            ALLOWPOOLSUSPENSION, READONLY, REGISTERMBEANS, CATALOG, CONNECTIONINITSQL,
+            DRIVERCLASSNAME, TRANSACTIONISOLATION, LEAKDETECTIONTHRESHOLD, FLYWAY_BYPASS,
+            FLYWAY_BASELINE_VERSION)
+        .stream().forEach(p -> config.listen(p, this::onConnectionPropertyChanged));
 
     // hot swappable
     config.listen(MAXIMUMPOOLSIZE,

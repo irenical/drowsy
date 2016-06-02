@@ -25,7 +25,8 @@ public class QueryTest {
 
   @Test
   public void testMultipleParameterQuery() {
-    SQLQueryBuilder qb = SQLQueryBuilder.select("select * from some_table where some_column").in(3, 5, 7);
+    SQLQueryBuilder qb = SQLQueryBuilder.select("select * from some_table where some_column").in(3,
+        5, 7);
     Query q = qb.build();
     Assert.assertEquals("select * from some_table where some_column in(?,?,?)", q.getQuery());
     Assert.assertEquals(3, q.getParameters().size());

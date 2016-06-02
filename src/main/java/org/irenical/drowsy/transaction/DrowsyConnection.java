@@ -28,13 +28,14 @@ public class DrowsyConnection implements InvocationHandler {
 
   public static Connection wrap(Connection connection) {
     if (Proxy.isProxyClass(connection.getClass())
-      && Proxy.getInvocationHandler(connection) instanceof DrowsyConnection) {
-        return connection;
+        && Proxy.getInvocationHandler(connection) instanceof DrowsyConnection) {
+      return connection;
     }
     DrowsyConnection proxy = new DrowsyConnection(connection);
-    return (Connection) Proxy.newProxyInstance(DrowsyConnection.class.getClassLoader(), new Class[] { Connection.class }, proxy);
+    return (Connection) Proxy.newProxyInstance(DrowsyConnection.class.getClassLoader(),
+        new Class[] { Connection.class }, proxy);
   }
-  
+
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {

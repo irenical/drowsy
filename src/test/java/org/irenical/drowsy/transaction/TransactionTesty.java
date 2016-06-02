@@ -23,7 +23,7 @@ public class TransactionTesty extends PGTestUtils {
       }
     }.run((Connection) null);
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testNoConnectionOperation() throws SQLException {
     new JdbcOperation<String>() {
@@ -43,7 +43,7 @@ public class TransactionTesty extends PGTestUtils {
       }
     }.run((DataSource) null);
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testNoDataSourceOperation() throws SQLException {
     new JdbcOperation<String>() {
@@ -56,17 +56,17 @@ public class TransactionTesty extends PGTestUtils {
 
   @Test
   public void testEmptyOperation() throws SQLException, IOException {
-    new JdbcOperation<String>(){
+    new JdbcOperation<String>() {
       @Override
       protected String execute(Connection connection) throws SQLException {
         return null;
       }
     }.run(createConnection(true));
   }
-  
+
   @Test
   public void testEmptyTransaction() throws SQLException, IOException {
-    new JdbcTransaction<String>(){
+    new JdbcTransaction<String>() {
       @Override
       protected String execute(Connection connection) throws SQLException {
         return null;
@@ -109,52 +109,53 @@ public class TransactionTesty extends PGTestUtils {
     Assert.assertTrue(rs[1].isClosed());
     Assert.assertTrue(ps[0].isClosed());
     Assert.assertTrue(ps[1].isClosed());
-    
+
     Assert.assertTrue(c.isClosed());
   }
-  
-  @Test(expected=SQLException.class)
+
+  @Test(expected = SQLException.class)
   public void testAutoCommitTransaction() throws SQLException, IOException {
-    new JdbcTransaction<String>(){
+    new JdbcTransaction<String>() {
       @Override
       protected String execute(Connection connection) throws SQLException {
         return null;
       }
     }.run(createConnection(true));
   }
-  
+
   @Test
   public void testReuseConnection() throws SQLException, IOException {
-    Connection [] c = new Connection[1];
+    Connection[] c = new Connection[1];
     c[0] = createConnection(true);
-    new JdbcOperation<String>(){
+    new JdbcOperation<String>() {
       @Override
       protected String execute(Connection connection) throws SQLException {
-        Assert.assertNotEquals(System.identityHashCode(connection),System.identityHashCode(c[0]));
-        c[0]=connection;
+        Assert.assertNotEquals(System.identityHashCode(connection), System.identityHashCode(c[0]));
+        c[0] = connection;
         return null;
       }
     }.run(c[0]);
-    new JdbcOperation<String>(){
+    new JdbcOperation<String>() {
       @Override
       protected String execute(Connection connection) throws SQLException {
-        Assert.assertEquals(System.identityHashCode(connection),System.identityHashCode(c[0]));
-        c[0]=connection;
+        Assert.assertEquals(System.identityHashCode(connection), System.identityHashCode(c[0]));
+        c[0] = connection;
         return null;
       }
     }.run(c[0]);
   }
-  
+
   @Test
   public void testNonAutoCommitOperation() throws SQLException, IOException {
-    JdbcOperation<Integer> insert = new JdbcOperation<Integer>(){
+    JdbcOperation<Integer> insert = new JdbcOperation<Integer>() {
       @Override
       protected Integer execute(Connection connection) throws SQLException {
-        PreparedStatement ps = connection.prepareStatement("insert into people(name) values('Moleman')");
+        PreparedStatement ps = connection
+            .prepareStatement("insert into people(name) values('Moleman')");
         return ps.executeUpdate();
       }
     };
-    JdbcOperation<String> select = new JdbcOperation<String>(){
+    JdbcOperation<String> select = new JdbcOperation<String>() {
       @Override
       protected String execute(Connection connection) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("select name from people where name=?");
@@ -166,17 +167,18 @@ public class TransactionTesty extends PGTestUtils {
     insert.run(createConnection(false));
     Assert.assertNull(select.run(createConnection(false)));
   }
-  
+
   @Test
   public void testTransactionCommit() throws SQLException, IOException {
-    JdbcTransaction<Integer> insert = new JdbcTransaction<Integer>(){
+    JdbcTransaction<Integer> insert = new JdbcTransaction<Integer>() {
       @Override
       protected Integer execute(Connection connection) throws SQLException {
-        PreparedStatement ps = connection.prepareStatement("insert into people(name) values('Moleman')");
+        PreparedStatement ps = connection
+            .prepareStatement("insert into people(name) values('Moleman')");
         return ps.executeUpdate();
       }
     };
-    JdbcOperation<String> select = new JdbcOperation<String>(){
+    JdbcOperation<String> select = new JdbcOperation<String>() {
       @Override
       protected String execute(Connection connection) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("select name from people where name=?");
@@ -185,7 +187,7 @@ public class TransactionTesty extends PGTestUtils {
         return rs.next() ? rs.getString(1) : null;
       }
     };
-    JdbcOperation<Integer> delete = new JdbcOperation<Integer>(){
+    JdbcOperation<Integer> delete = new JdbcOperation<Integer>() {
       @Override
       protected Integer execute(Connection connection) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("delete from people where name=?");
@@ -198,18 +200,19 @@ public class TransactionTesty extends PGTestUtils {
     delete.run(createConnection(true));
     Assert.assertNull(select.run(createConnection(true)));
   }
-  
+
   @Test
   public void testTransactionRollback() throws SQLException, IOException {
-    JdbcTransaction<Integer> insert = new JdbcTransaction<Integer>(){
+    JdbcTransaction<Integer> insert = new JdbcTransaction<Integer>() {
       @Override
       protected Integer execute(Connection connection) throws SQLException {
-        PreparedStatement ps = connection.prepareStatement("insert into people(name) values('Moleman')");
+        PreparedStatement ps = connection
+            .prepareStatement("insert into people(name) values('Moleman')");
         ps = connection.prepareStatement("insert onto peepal(neime) valuez('Moleman')");
         return ps.executeUpdate();
       }
     };
-    JdbcOperation<String> select = new JdbcOperation<String>(){
+    JdbcOperation<String> select = new JdbcOperation<String>() {
       @Override
       protected String execute(Connection connection) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("select name from people where name=?");
@@ -218,10 +221,10 @@ public class TransactionTesty extends PGTestUtils {
         return rs.next() ? rs.getString(1) : null;
       }
     };
-    try{
+    try {
       insert.run(createConnection(false));
       Assert.fail();
-    } catch(SQLException e){
+    } catch (SQLException e) {
       e.printStackTrace();
     }
     Assert.assertNull(select.run(createConnection(true)));

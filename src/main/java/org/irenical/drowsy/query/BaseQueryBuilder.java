@@ -16,11 +16,11 @@ public abstract class BaseQueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDE
   private final StringBuilder sb = new StringBuilder();
 
   private final TYPE type;
-  
+
   public BaseQueryBuilder(TYPE type) {
     this.type = type;
   }
-  
+
   @Override
   public Query build() {
     BaseQuery result = new BaseQuery();

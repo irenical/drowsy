@@ -17,24 +17,28 @@ public class BeanMapper {
   private static final Logger LOG = LoggerFactory.getLogger(BeanMapper.class);
 
   public <OBJECT> List<OBJECT> map(ResultSet resultSet, Class<OBJECT> beanClass)
-      throws SQLException, InstantiationException, IllegalAccessException {
+      throws SQLException {
     List<OBJECT> result = new LinkedList<>();
-    if (resultSet.next()) {
-      List<String> cols = new LinkedList<>();
-      ResultSetMetaData md = resultSet.getMetaData();
-      for (int c = 1; c <= md.getColumnCount(); ++c) {
-        cols.add(md.getColumnName(c));
+    try {
+      if (resultSet.next()) {
+        List<String> cols = new LinkedList<>();
+        ResultSetMetaData md = resultSet.getMetaData();
+        for (int c = 1; c <= md.getColumnCount(); ++c) {
+          cols.add(md.getColumnName(c));
+        }
+        Map<String, Field> fields = new HashMap<>();
+        for (Field field : beanClass.getDeclaredFields()) {
+          field.setAccessible(true);
+          fields.put(field.getName(), field);
+        }
+        do {
+          OBJECT bean = beanClass.newInstance();
+          rowToBean(bean, resultSet, cols, fields);
+          result.add(bean);
+        } while (resultSet.next());
       }
-      Map<String, Field> fields = new HashMap<>();
-      for (Field field : beanClass.getDeclaredFields()) {
-        field.setAccessible(true);
-        fields.put(field.getName(), field);
-      }
-      do {
-        OBJECT bean = beanClass.newInstance();
-        rowToBean(bean, resultSet, cols, fields);
-        result.add(bean);
-      } while (resultSet.next());
+    } catch (IllegalArgumentException | IllegalAccessException | InstantiationException e) {
+      throw new SQLException("ORM reflection exception", e);
     }
     return result;
   }
@@ -54,8 +58,8 @@ public class BeanMapper {
       }
       Class<?> fieldType = getObjectType(field.getType());
       if (!fieldType.isAssignableFrom(cell.getClass())) {
-        throw new SQLException("Field " + col + " on class " + bean.getClass() + " type mismatch. Expected "
-            + cell.getClass());
+        throw new SQLException("Field " + col + " on class " + bean.getClass()
+            + " type mismatch. Expected " + cell.getClass());
       } else {
         field.set(bean, cell);
       }
@@ -63,8 +67,8 @@ public class BeanMapper {
   }
 
   private Class<?> getObjectType(Class<?> type) {
-    if(type.isPrimitive()){
-      switch(type.getName()){
+    if (type.isPrimitive()) {
+      switch (type.getName()) {
       case "boolean":
         return Boolean.class;
       case "byte":
@@ -74,15 +78,16 @@ public class BeanMapper {
       case "short":
         return Short.class;
       case "int":
-      return Integer.class;
+        return Integer.class;
       case "float":
         return Float.class;
       case "long":
         return Long.class;
       case "double":
         return Double.class;
-        default:
-          throw new java.lang.UnsupportedOperationException("Primitive type not supported: " + type.getName());
+      default:
+        throw new java.lang.UnsupportedOperationException(
+            "Primitive type not supported: " + type.getName());
       }
     } else {
       return type;

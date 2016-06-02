@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
@@ -53,6 +54,8 @@ public class BaseQuery implements Query {
     PreparedStatement ps;
     if (TYPE.CALL.equals(type)) {
       ps = connection.prepareCall(query);
+    } else if (TYPE.INSERT.equals(type)) {
+      ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
     } else {
       ps = connection.prepareStatement(query);
     }
