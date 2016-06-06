@@ -33,7 +33,7 @@ public abstract class JdbcTransaction<OUTPUT> {
     if (dataSource == null) {
       throw new IllegalArgumentException("JDBC datasource cannot be null");
     }
-    return execute(dataSource.getConnection());
+    return run(dataSource.getConnection());
   }
 
   public OUTPUT run(Connection connection) throws SQLException {

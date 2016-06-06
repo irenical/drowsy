@@ -9,6 +9,7 @@ import org.irenical.drowsy.datasource.DrowsyDataSource;
 import org.irenical.drowsy.mapper.BeanMapper;
 import org.irenical.drowsy.query.Query;
 import org.irenical.drowsy.transaction.JdbcOperation;
+import org.irenical.drowsy.transaction.JdbcTransaction;
 import org.irenical.jindy.Config;
 import org.irenical.jindy.ConfigFactory;
 import org.irenical.lifecycle.LifeCycle;
@@ -72,7 +73,7 @@ public class Drowsy implements LifeCycle {
   }
 
   public <OBJECT> List<OBJECT> executeInsert(Query query, Class<OBJECT> beanClass)
-      throws SQLException, InstantiationException, IllegalAccessException {
+      throws SQLException {
     return new JdbcOperation<List<OBJECT>>() {
       @Override
       protected List<OBJECT> execute(Connection connection) throws SQLException {
@@ -91,6 +92,15 @@ public class Drowsy implements LifeCycle {
         return statement.executeUpdate();
       }
     }.run(operationDataSource);
+  }
+
+  public <OBJECT> OBJECT executeTransaction(JdbcFunction<OBJECT> transaction) throws SQLException {
+    return new JdbcTransaction<OBJECT>() {
+      @Override
+      protected OBJECT execute(Connection connection) throws SQLException {
+        return transaction.apply(connection);
+      }
+    }.run(transactionDataSource);
   }
 
 }
