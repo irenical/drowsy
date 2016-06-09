@@ -10,7 +10,7 @@
 
   <groupId>org.irenical.drowsy</groupId>
   <artifactId>drowsy</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.3-SNAPSHOT</version>
 
   <name>Drowsy</name>
   <description>Another non-orm JDBC library</description>
@@ -73,7 +73,7 @@
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
-      <version>4.0.1</version>
+      <version>4.0.2</version>
     </dependency>
     <dependency>
       <groupId>ru.yandex.qatools.embed</groupId>

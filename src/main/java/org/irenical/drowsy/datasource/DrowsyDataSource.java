@@ -22,11 +22,10 @@ import com.zaxxer.hikari.pool.HikariPool;
 /**
  * DrowsyDataSource is a DataSource with dynamic configuration capabilities. It
  * includes FlyWay and uses HikariCP as the actual DataSource implementation.
- * Configuration is done by the current Jindy binding.
+ *
+ * Configuration is done by the given Jindy Config instance.
  * <h3>DataSource configuration:</h3> As described in
  * https://github.com/brettwooldridge/HikariCP<br>
- * Prefixed with jdbc by default (ex: jdbc.username, jdbc.password,
- * jdbc.jdbcUrl, etc...) <br>
  * <h3>FlyWay configuration:</h3> flyway.bypass - whether to bypass flyway
  * [optional,default=false]<br>
  * flyway.baselineVersion - the baseline version to consider [optional,
@@ -67,24 +66,12 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
 
   private HikariDataSource dataSource;
 
-  /**
-   * Creates a new DataSource that reads it's configuration from the properties
-   * as described in this class
-   */
   public DrowsyDataSource() {
-    this("jdbc");
+    this( ConfigFactory.getConfig().filterPrefix( "jdbc" ) );
   }
 
-  /**
-   * Creates a new DataSource
-   * 
-   * @param configPrefix
-   *          - the configuration keys prefix, all the DataSource configuration
-   *          properties described in this class will be prefixed by given value
-   */
-  public DrowsyDataSource(String configPrefix) {
-    this.config = configPrefix == null || configPrefix.trim().isEmpty() ? ConfigFactory.getConfig()
-        : ConfigFactory.getConfig().filterPrefix(configPrefix);
+  public DrowsyDataSource( Config config ) {
+    this.config = config;
   }
 
   @Override
@@ -167,7 +154,6 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
     result.setJdbcUrl(config.getString(JDBCURL));
     result.setUsername(config.getString(USERNAME));
     result.setPassword(config.getString(PASSWORD));
-    result.setAutoCommit(config.getBoolean(AUTOCOMMIT, false));
     result.setConnectionTimeout(config.getInt(CONNECTIONTIMEOUT, 30000));
     result.setIdleTimeout(config.getInt(IDLETIMEOUT, 600000));
     result.setMaxLifetime(config.getInt(MAXLIFETIME, 1800000));
@@ -178,7 +164,6 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
     result.setInitializationFailFast(config.getBoolean(INITIALIZATIONFAILFAST, true));
     result.setIsolateInternalQueries(config.getBoolean(ISOLATEINTERNALQUERIES, false));
     result.setAllowPoolSuspension(config.getBoolean(ALLOWPOOLSUSPENSION, false));
-    result.setReadOnly(config.getBoolean(READONLY, false));
     result.setRegisterMbeans(config.getBoolean(REGISTERMBEANS, false));
     result.setCatalog(config.getString(CATALOG));
     result.setConnectionInitSql(config.getString(CONNECTIONINITSQL));
@@ -189,6 +174,8 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
     result.setTransactionIsolation(config.getString(TRANSACTIONISOLATION));
     result.setValidationTimeout(config.getInt(VALIDATIONTIMEOUT, 5000));
     result.setLeakDetectionThreshold(config.getInt(LEAKDETECTIONTHRESHOLD, 0));
+    result.setAutoCommit( isAutoCommit() );
+    result.setReadOnly( isReadOnly() );
     return result;
   }
 
@@ -198,7 +185,7 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
   }
 
   private void migrate() {
-    if (config.getBoolean(FLYWAY_BYPASS, false)) {
+    if ( isFlywayBypass() ) {
       return;
     }
     Flyway flyway = new Flyway();
@@ -244,6 +231,18 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
         dataSource.close();
       }
     }
+  }
+
+  protected boolean isAutoCommit() {
+    return config.getBoolean(AUTOCOMMIT, false);
+  }
+
+  protected boolean isReadOnly() {
+    return config.getBoolean( READONLY, false );
+  }
+
+  protected boolean isFlywayBypass() {
+    return config.getBoolean( FLYWAY_BYPASS, false );
   }
 
 }
