@@ -1,4 +1,4 @@
-package org.irenical.drowsy.query;
+package org.irenical.drowsy.query.builder.sql;
 
 import org.irenical.drowsy.query.Query.TYPE;
 

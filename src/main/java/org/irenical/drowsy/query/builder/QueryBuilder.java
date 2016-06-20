@@ -1,4 +1,6 @@
-package org.irenical.drowsy.query;
+package org.irenical.drowsy.query.builder;
+
+import org.irenical.drowsy.query.Query;
 
 public interface QueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDER_CLASS>> {
 

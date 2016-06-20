@@ -1,10 +1,13 @@
-package org.irenical.drowsy.query;
+package org.irenical.drowsy.query.builder.sql;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.irenical.drowsy.query.BaseQuery;
+import org.irenical.drowsy.query.Query;
 import org.irenical.drowsy.query.Query.TYPE;
+import org.irenical.drowsy.query.builder.QueryBuilder;
 
 public abstract class BaseQueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDER_CLASS>>
     implements QueryBuilder<BUILDER_CLASS> {

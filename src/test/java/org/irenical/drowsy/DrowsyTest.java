@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.irenical.drowsy.mapper.bean.LegitPerson;
-import org.irenical.drowsy.query.SQLQueryBuilder;
+import org.irenical.drowsy.query.builder.sql.SQLQueryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,5 +1,6 @@
 package org.irenical.drowsy.query;
 
+import org.irenical.drowsy.query.builder.sql.SQLQueryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
