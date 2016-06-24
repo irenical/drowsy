@@ -12,7 +12,7 @@ import org.irenical.drowsy.PGTestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TransactionTesty extends PGTestUtils {
+public class TransactionTest extends PGTestUtils {
 
   @Test(expected = IllegalArgumentException.class)
   public void testNoConnectionTransaction() throws SQLException {

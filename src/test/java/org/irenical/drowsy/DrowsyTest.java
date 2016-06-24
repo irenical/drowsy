@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.irenical.drowsy.mapper.bean.LegitPerson;
-import org.irenical.drowsy.query.builder.sql.SQLQueryBuilder;
+import org.irenical.drowsy.query.builder.sql.DeleteBuilder;
+import org.irenical.drowsy.query.builder.sql.InsertBuilder;
+import org.irenical.drowsy.query.builder.sql.SelectBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,7 +18,7 @@ public class DrowsyTest extends PGTestUtils {
     Drowsy drowsy = new Drowsy();
     drowsy.start();
     List<LegitPerson> got = drowsy
-        .executeSelect(SQLQueryBuilder.select("select * from people").build(), LegitPerson.class);
+        .read(SelectBuilder.create("select * from people").build(), LegitPerson.class);
     Assert.assertEquals(1, got.size());
     Assert.assertEquals("Boda", got.get(0).getName());
   }
@@ -25,15 +27,15 @@ public class DrowsyTest extends PGTestUtils {
   public void testInsertDelete() throws SQLException {
     Drowsy drowsy = new Drowsy();
     drowsy.start();
-    List<LegitPerson> inserted = drowsy.executeInsert(SQLQueryBuilder
-        .insert("insert into people(name) values(").param("John").literal(")").build(),
+    List<LegitPerson> inserted = drowsy.write(InsertBuilder
+        .create("insert into people(name) values(").param("John").literal(")").build(),
         LegitPerson.class);
     LegitPerson newJohn = inserted.get(0);
     Assert.assertNotEquals(1, newJohn.getId());
     Assert.assertEquals("John", newJohn.getName());
 
-    List<LegitPerson> selected = drowsy.executeSelect(
-        SQLQueryBuilder.select("select * from people where id=").param(newJohn.getId()).build(),
+    List<LegitPerson> selected = drowsy.read(
+        SelectBuilder.create("select * from people where id=").param(newJohn.getId()).build(),
         LegitPerson.class);
 
     Assert.assertEquals(1, selected.size());
@@ -41,8 +43,8 @@ public class DrowsyTest extends PGTestUtils {
     Assert.assertEquals(newJohn.getName(), oldJohn.getName());
     Assert.assertEquals(newJohn.getId(), oldJohn.getId());
 
-    int del = drowsy.executeDelete(
-        SQLQueryBuilder.delete("delete from people where id=").param(oldJohn.getId()).build());
+    int del = drowsy.write(
+        DeleteBuilder.from("people").where("id").eq(oldJohn.getId()).build());
     Assert.assertEquals(1, del);
   }
 
@@ -50,15 +52,15 @@ public class DrowsyTest extends PGTestUtils {
   public void testTransactionAutoCommited() throws SQLException {
     Drowsy drowsy = new Drowsy();
     drowsy.start();
-    List<LegitPerson> inserted = drowsy.executeInsert(SQLQueryBuilder
-        .insert("insert into people(name) values(").param("John").literal(")").build(),
+    List<LegitPerson> inserted = drowsy.write(InsertBuilder
+        .create("insert into people(name) values(").param("John").literal(")").build(),
         LegitPerson.class);
     LegitPerson newJohn = inserted.get(0);
     Assert.assertNotEquals(1, newJohn.getId());
     Assert.assertEquals("John", newJohn.getName());
 
-    List<LegitPerson> selected = drowsy.executeSelect(
-        SQLQueryBuilder.select("select * from people where id=").param(newJohn.getId()).build(),
+    List<LegitPerson> selected = drowsy.read(
+        SelectBuilder.create("select * from people where id=").param(newJohn.getId()).build(),
         LegitPerson.class);
 
     Assert.assertEquals(1, selected.size());
@@ -66,8 +68,8 @@ public class DrowsyTest extends PGTestUtils {
     Assert.assertEquals(newJohn.getName(), oldJohn.getName());
     Assert.assertEquals(newJohn.getId(), oldJohn.getId());
 
-    int del = drowsy.executeDelete(
-        SQLQueryBuilder.delete("delete from people where id=").param(oldJohn.getId()).build());
+    int del = drowsy.write(
+        DeleteBuilder.from("people").where("id").eq(oldJohn.getId()).build());
     Assert.assertEquals(1, del);
   }
 
@@ -77,19 +79,19 @@ public class DrowsyTest extends PGTestUtils {
     drowsy.start();
     
     drowsy.executeTransaction(c->{
-      PreparedStatement ps = SQLQueryBuilder.insert("insert into people(name) values(").param("John").literal(")").build().createPreparedStatement(c);
+      PreparedStatement ps = InsertBuilder.create("insert into people(name) values(").param("John").literal(")").build().createPreparedStatement(c);
       ps.executeUpdate();
       return null;
     });
 
-    List<LegitPerson> selected = drowsy.executeSelect(
-        SQLQueryBuilder.select("select * from people where name=").param("John").build(),
+    List<LegitPerson> selected = drowsy.read(
+        SelectBuilder.create("select * from people where name=").param("John").build(),
         LegitPerson.class);
 
     Assert.assertEquals(1, selected.size());
 
-    int del = drowsy.executeDelete(
-        SQLQueryBuilder.delete("delete from people where name=").param("John").build());
+    int del = drowsy.write(
+        DeleteBuilder.from("people").where("name").eq("John").build());
     Assert.assertEquals(1, del);
   }
   
@@ -100,7 +102,7 @@ public class DrowsyTest extends PGTestUtils {
     
     try{
       drowsy.executeTransaction(c->{
-        PreparedStatement ps = SQLQueryBuilder.insert("insert into people(name) values(").param("John").literal(")").build().createPreparedStatement(c);
+        PreparedStatement ps = InsertBuilder.create("insert into people(name) values(").param("John").literal(")").build().createPreparedStatement(c);
         ps.executeUpdate();
         throw new SQLException("oops");
       });
@@ -109,10 +111,9 @@ public class DrowsyTest extends PGTestUtils {
       //      /\
       // excellent
     }
-
     
-    List<LegitPerson> selected = drowsy.executeSelect(
-        SQLQueryBuilder.select("select * from people where name=").param("John").build(),
+    List<LegitPerson> selected = drowsy.read(
+        SelectBuilder.create("select * from people where name=").param("John").build(),
         LegitPerson.class);
 
     Assert.assertEquals(0, selected.size());

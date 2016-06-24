@@ -24,7 +24,7 @@ public interface QueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDER_CLASS>>
 
   public abstract BUILDER_CLASS literals(Iterable<Object> sql, String prefix, String suffix,
       String separator);
-
+  
   /**
    * Append a parameter. A ? will be appended to the query
    * 
@@ -32,8 +32,8 @@ public interface QueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDER_CLASS>>
    *          - the object representing the value
    * @return the builder
    */
-  public abstract BUILDER_CLASS param(Object param);
-
+  public abstract BUILDER_CLASS param(Object value);
+  
   /**
    * Append multiple values. A ? will be appended to the query for each value
    * Useful for IN expressions

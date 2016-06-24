@@ -1,6 +1,7 @@
-package org.irenical.drowsy.query;
+package org.irenical.drowsy.query.builder.sql;
 
-import org.irenical.drowsy.query.builder.sql.SQLQueryBuilder;
+import org.irenical.drowsy.query.Query;
+import org.irenical.drowsy.query.builder.sql.SelectBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -8,7 +9,7 @@ public class QueryTest {
 
   @Test
   public void testLiteralQuery() {
-    SQLQueryBuilder qb = SQLQueryBuilder.select("select * from some_table");
+    SelectBuilder qb = SelectBuilder.create("select * from some_table");
     Query q = qb.build();
     Assert.assertEquals("select * from some_table", q.getQuery());
     Assert.assertTrue(q.getParameters().isEmpty());
@@ -16,7 +17,7 @@ public class QueryTest {
 
   @Test
   public void testSingleParameterQuery() {
-    SQLQueryBuilder qb = SQLQueryBuilder.select("select * from some_table where some_column").eq(3);
+    SelectBuilder qb = SelectBuilder.create("select * from some_table where some_column").eq(3);
     Query q = qb.build();
     Assert.assertEquals("select * from some_table where some_column=?", q.getQuery());
     Assert.assertTrue(q.getParameters().size() == 1);
@@ -26,7 +27,7 @@ public class QueryTest {
 
   @Test
   public void testMultipleParameterQuery() {
-    SQLQueryBuilder qb = SQLQueryBuilder.select("select * from some_table where some_column").in(3,
+    SelectBuilder qb = SelectBuilder.create("select * from some_table where some_column").in(3,
         5, 7);
     Query q = qb.build();
     Assert.assertEquals("select * from some_table where some_column in(?,?,?)", q.getQuery());
@@ -37,6 +38,23 @@ public class QueryTest {
     Assert.assertTrue(((Integer) q.getParameters().get(0)).equals(3));
     Assert.assertTrue(((Integer) q.getParameters().get(1)).equals(5));
     Assert.assertTrue(((Integer) q.getParameters().get(2)).equals(7));
+  }
+  
+  @Test
+  public void testCustomInsert() {
+    Query q = InsertBuilder.create("insert into some_table(some_column) values(").param("some_value").literal(")").build();
+    Assert.assertEquals("insert into some_table(some_column) values(?)", q.getQuery());
+    Assert.assertEquals(q.getParameters().size(), 1);
+    Assert.assertEquals("some_value",q.getParameters().get(0));
+  }
+  
+  @Test
+  public void testInsertInto() {
+    String query = "insert into some_table(some_column) values(?)";
+    Query q = InsertBuilder.into("some_table").columns("some_column").values("some_value").build();
+    Assert.assertEquals(query, q.getQuery());
+    Assert.assertEquals(q.getParameters().size(), 1);
+    Assert.assertEquals("some_value",q.getParameters().get(0));
   }
 
 }

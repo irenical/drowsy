@@ -2,8 +2,10 @@ package org.irenical.drowsy;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.function.Function;
 
 import org.irenical.drowsy.datasource.DrowsyDataSource;
 import org.irenical.drowsy.mapper.BeanMapper;
@@ -15,11 +17,14 @@ import org.irenical.jindy.ConfigFactory;
 import org.irenical.lifecycle.LifeCycle;
 
 /**
- * Drowsy contains DrowsyDataSource's needed to handle transactional/single operations/read-only queries.
+ * Drowsy contains DrowsyDataSource's needed to handle transactional/single
+ * operations/read-only queries.
  *
  * Configuration is done by the current Jindy binding.
- * <h3>DataSource configuration:</h3> As described in https://github.com/brettwooldridge/HikariCP<br>
- * Prefixed with jdbc by default (ex: jdbc.username, jdbc.password, jdbc.jdbcUrl, etc...)
+ * <h3>DataSource configuration:</h3> As described in
+ * https://github.com/brettwooldridge/HikariCP<br>
+ * Prefixed with jdbc by default (ex: jdbc.username, jdbc.password,
+ * jdbc.jdbcUrl, etc...)
  *
  * @see DrowsyDataSource
  */
@@ -39,23 +44,25 @@ public class Drowsy implements LifeCycle {
    * @see DrowsyDataSource
    */
   public Drowsy() {
-    this(ConfigFactory.getConfig().filterPrefix( "jdbc" ) );
+    this(ConfigFactory.getConfig().filterPrefix("jdbc"));
   }
 
   /**
    * Initialized a Drowsy object with the given config.
    *
-   * @param config  a jindy Config instance containing the DataSource configuration properties.
+   * @param config
+   *          a jindy Config instance containing the DataSource configuration
+   *          properties.
    * @see DrowsyDataSource
    *
-     */
-  public Drowsy( Config config ) {
+   */
+  public Drowsy(Config config) {
     this.config = config;
   }
 
   @Override
   public void start() {
-    transactionDataSource = new DrowsyDataSource( config ) {
+    transactionDataSource = new DrowsyDataSource(config) {
       @Override
       protected boolean isAutoCommit() {
         return false;
@@ -63,7 +70,7 @@ public class Drowsy implements LifeCycle {
     };
     transactionDataSource.start();
 
-    operationDataSource = new DrowsyDataSource( config ) {
+    operationDataSource = new DrowsyDataSource(config) {
       @Override
       protected boolean isAutoCommit() {
         return true;
@@ -81,7 +88,7 @@ public class Drowsy implements LifeCycle {
     };
     operationDataSource.start();
 
-    readOnlyDataSource = new DrowsyDataSource( config ) {
+    readOnlyDataSource = new DrowsyDataSource(config) {
       @Override
       protected boolean isAutoCommit() {
         return true;
@@ -111,9 +118,18 @@ public class Drowsy implements LifeCycle {
   public boolean isRunning() {
     return transactionDataSource.isRunning() && operationDataSource.isRunning() && readOnlyDataSource.isRunning();
   }
+  
+  public <OUTPUT> OUTPUT read(Query query, Function<ResultSet,OUTPUT> reader) throws SQLException {
+    return new JdbcOperation<OUTPUT>() {
+      @Override
+      protected OUTPUT execute(Connection connection) throws SQLException {
+        PreparedStatement statement = query.createPreparedStatement(connection);
+        return reader.apply(statement.executeQuery());
+      }
+    }.run(readOnlyDataSource);
+  }
 
-  public <OBJECT> List<OBJECT> executeSelect(Query query, Class<OBJECT> beanClass)
-      throws SQLException {
+  public <OBJECT> List<OBJECT> read(Query query, Class<OBJECT> beanClass) throws SQLException {
     return new JdbcOperation<List<OBJECT>>() {
       @Override
       protected List<OBJECT> execute(Connection connection) throws SQLException {
@@ -123,8 +139,7 @@ public class Drowsy implements LifeCycle {
     }.run(readOnlyDataSource);
   }
 
-  public <OBJECT> List<OBJECT> executeInsert(Query query, Class<OBJECT> beanClass)
-      throws SQLException {
+  public <OBJECT> List<OBJECT> write(Query query, Class<OBJECT> beanClass) throws SQLException {
     return new JdbcOperation<List<OBJECT>>() {
       @Override
       protected List<OBJECT> execute(Connection connection) throws SQLException {
@@ -135,7 +150,7 @@ public class Drowsy implements LifeCycle {
     }.run(operationDataSource);
   }
 
-  public int executeDelete(Query query) throws SQLException {
+  public int write(Query query) throws SQLException {
     return new JdbcOperation<Integer>() {
       @Override
       protected Integer execute(Connection connection) throws SQLException {
