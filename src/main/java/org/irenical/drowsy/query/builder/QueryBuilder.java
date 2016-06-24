@@ -32,7 +32,7 @@ public interface QueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDER_CLASS>>
    *          - the object representing the value
    * @return the builder
    */
-  public abstract BUILDER_CLASS param(Object value);
+  public abstract BUILDER_CLASS param(Object param);
   
   /**
    * Append multiple values. A ? will be appended to the query for each value
