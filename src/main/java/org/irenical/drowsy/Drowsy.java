@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.function.Function;
 
 import org.irenical.drowsy.datasource.DrowsyDataSource;
 import org.irenical.drowsy.mapper.BeanMapper;
@@ -119,7 +118,7 @@ public class Drowsy implements LifeCycle {
     return transactionDataSource.isRunning() && operationDataSource.isRunning() && readOnlyDataSource.isRunning();
   }
   
-  public <OUTPUT> OUTPUT read(Query query, Function<ResultSet,OUTPUT> reader) throws SQLException {
+  public <OUTPUT> OUTPUT read(Query query, JdbcFunction<ResultSet,OUTPUT> reader) throws SQLException {
     return new JdbcOperation<OUTPUT>() {
       @Override
       protected OUTPUT execute(Connection connection) throws SQLException {
@@ -160,7 +159,7 @@ public class Drowsy implements LifeCycle {
     }.run(operationDataSource);
   }
 
-  public <OBJECT> OBJECT executeTransaction(JdbcFunction<OBJECT> transaction) throws SQLException {
+  public <OBJECT> OBJECT executeTransaction(JdbcFunction<Connection, OBJECT> transaction) throws SQLException {
     return new JdbcTransaction<OBJECT>() {
       @Override
       protected OBJECT execute(Connection connection) throws SQLException {

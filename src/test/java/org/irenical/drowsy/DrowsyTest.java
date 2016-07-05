@@ -79,7 +79,10 @@ public class DrowsyTest extends PGTestUtils {
     drowsy.start();
     
     drowsy.executeTransaction(c->{
-      PreparedStatement ps = InsertBuilder.create("insert into people(name) values(").param("John").literal(")").build().createPreparedStatement(c);
+      PreparedStatement ps = InsertBuilder
+        .create("insert into people(name) values(").param("John").literal(")")
+        .build()
+        .createPreparedStatement(c);
       ps.executeUpdate();
       return null;
     });
@@ -102,7 +105,10 @@ public class DrowsyTest extends PGTestUtils {
     
     try{
       drowsy.executeTransaction(c->{
-        PreparedStatement ps = InsertBuilder.create("insert into people(name) values(").param("John").literal(")").build().createPreparedStatement(c);
+        PreparedStatement ps = InsertBuilder
+          .create("insert into people(name) values(").param("John").literal(")")
+          .build()
+          .createPreparedStatement(c);
         ps.executeUpdate();
         throw new SQLException("oops");
       });
