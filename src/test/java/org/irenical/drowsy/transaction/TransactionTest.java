@@ -206,8 +206,8 @@ public class TransactionTest extends PGTestUtils {
     JdbcTransaction<Integer> insert = new JdbcTransaction<Integer>() {
       @Override
       protected Integer execute(Connection connection) throws SQLException {
-        PreparedStatement ps = connection
-            .prepareStatement("insert into people(name) values('Moleman')");
+        PreparedStatement ps = connection.prepareStatement("insert into people(name) values('Moleman')");
+        ps.executeUpdate();
         ps = connection.prepareStatement("insert onto peepal(neime) valuez('Moleman')");
         return ps.executeUpdate();
       }
