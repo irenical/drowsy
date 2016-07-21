@@ -89,12 +89,26 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
 
   @Override
   public boolean isRunning() {
+    boolean isClosed = dataSource.isClosed();
+    if ( isClosed ) {
+      return false;
+    }
+
+    Connection connection = null;
     try {
-      dataSource.getConnection();
+      connection = getConnection();
       return true;
     } catch (SQLException e) {
       LOGGER.error(e.getMessage(), e);
       return false;
+    } finally {
+      if ( connection != null ) {
+        try {
+          connection.close();
+        } catch (SQLException e) {
+          LOGGER.error( e.getLocalizedMessage(), e );
+        }
+      }
     }
   }
 
