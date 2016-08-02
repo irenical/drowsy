@@ -16,7 +16,7 @@ public class SelectBuilder extends ExpressionBuilder<SelectBuilder> {
     return result;
   }
 
-  public static SelectBuilder columns(Object... columns) {
+  public static SelectBuilder select(Object... columns) {
     return create("select ").literals(Arrays.asList(columns), "", "", ",");
   }
 
