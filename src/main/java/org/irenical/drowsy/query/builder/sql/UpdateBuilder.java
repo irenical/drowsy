@@ -25,7 +25,7 @@ public class UpdateBuilder extends ExpressionBuilder<UpdateBuilder> {
       literal(",");
       firstSet=false;
     }
-    return literal(lvalue).eq(param);
+    return literal(lvalue).literal("=").param(param);
   }
 
   public UpdateBuilder setExpression(String lvalue, Object rvalue) {
