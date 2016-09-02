@@ -46,7 +46,7 @@ Simple ResultSet to bean mapping.
 [org.irenical.drowsy]  
 The full bundle. Glues all the modules together in a simplified, easy to use API.
 
-### Usage
+## Usage
 Note: You can use the modules separately, these examples bellow apply when you're using the entire Drowsy bundle.  
 
 Drowsy LifeCycle
@@ -62,7 +62,7 @@ One liner
 List<LegitPerson> got = drowsy.read(SelectBuilder.create("select * from people").build(), LegitPerson.class);
 ```
 
-### Configuration
+## Configuration
 DataSource configuration is as in [HikariCP](https://github.com/brettwooldridge/HikariCP), prefixed with jdbc. Plus two Flyway specific configurations.
 ```properties
 jdbc.url=jdbc:postgresql://localhost:5432/MyDB
