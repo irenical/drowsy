@@ -46,6 +46,31 @@ Simple ResultSet to bean mapping.
 [org.irenical.drowsy]  
 The full bundle. Glues all the modules together in a simplified, easy to use API.
 
+### Usage
+Note: You can use the modules separately, these examples bellow apply when you're using the entire Drowsy bundle.  
+
+### Configuration
+DataSource configuration is as in [HikariCP](https://github.com/brettwooldridge/HikariCP), prefixed with jdbc. Plus two Flyway specific configurations.
+```properties
+jdbc.url=jdbc:postgresql://localhost:5432/MyDB
+jdbc.username=me
+jdbc.password=hunter2
+...
+
+jdbc.flyway.bypass=false # whether or not to use Flyway, defaults to false
+jdbc.flyway.baselineVersion=3 # If set and Flyway is active, only updates greater that this will be applied. Defaults to null.
+```
+
+
+Drowsy uses [Jindy](https://github.com/irenical/jindy) for configuration, so a Jindy binding is required. The easiest way to do this is probably by adding the following dependency to your application. You can then use System.setProperty() or a config.properties file in your resources to set Drowsy's configuration.
+```
+<dependency>
+    <groupId>org.irenical.jindy</groupId>
+    <artifactId>jindy-apacheconfig-impl</artifactId>
+    <version>2.1.0</version>
+</dependency>
+```
+
 [maven]:http://search.maven.org/#search|gav|1|g:"org.irenical.drowsy"%20AND%20a:"drowsy"
 [maven img]:https://maven-badges.herokuapp.com/maven-central/org.irenical.drowsy/drowsy/badge.svg
 
