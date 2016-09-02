@@ -70,8 +70,10 @@ jdbc.username=me
 jdbc.password=hunter2
 ...
 
-jdbc.flyway.bypass=false # whether or not to use Flyway, defaults to false
-jdbc.flyway.baselineVersion=3 # If set and Flyway is active, only updates greater that this will be applied. Defaults to null.
+# Whether or not to use Flyway, defaults to false
+jdbc.flyway.bypass=false
+#If set and Flyway is active, only updates greater that this will be applied, defaults to null
+jdbc.flyway.baselineVersion=3
 ```
 
 Drowsy uses [Jindy](https://github.com/irenical/jindy) for configuration, so a Jindy binding is required. The easiest way to do this is probably by adding the following dependency to your application. You can then use System.setProperty() or a config.properties file in your resources to set Drowsy's configuration.
