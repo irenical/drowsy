@@ -28,11 +28,11 @@ As of now, Drowsy is still a single project.
 In it you can find the following modules:
 <h3>DataSource</h3>
 [org.irenical.drowsy.datasource]  
-A DataSource implementation with built-in dynamic configuration, allowing you to change any DataSource property in runtime. It's built uppon [HikariCP](https://github.com/brettwooldridge/HikariCP), [Flyway](https://github.com/flyway/flyway) and [Jindy](https://github.com/irenical/jindy).
+A DataSource implementation with built-in dynamic configuration, allowing you to change any property at runtime. It's built uppon [HikariCP](https://github.com/brettwooldridge/HikariCP), [Flyway](https://github.com/flyway/flyway) and [Jindy](https://github.com/irenical/jindy).
 
 <h3>Transaction</h3>
-[org.irenical.drowsy.transaction]
-Models database operations at the connection and transaction level. Ensures resource deallocation, transaction commit and rollback using inversion of control.
+[org.irenical.drowsy.transaction]  
+Models database operations at the connection and transaction level. Ensures resource deallocation, transaction commit and rollback on error.
 
 <h3>Query</h3>
 [org.irenical.drowsy.query]  
@@ -49,7 +49,7 @@ The full bundle. Glues all the modules together in a simplified, easy to use API
 ## Usage
 Note: You can use the modules separately, these examples bellow apply when you're using the entire Drowsy bundle.  
 
-Drowsy LifeCycle
+<b>Life cycle</b>
 ```java
 Drowsy drowsy = new Drowsy();
 drowsy.start();
@@ -57,7 +57,7 @@ drowsy.start();
 drowsy.stop();
 ```
 
-One liner
+<b>One liner select</b>
 ```java
 List<LegitPerson> got = drowsy.read(SelectBuilder.create("select * from people").build(), LegitPerson.class);
 ```
