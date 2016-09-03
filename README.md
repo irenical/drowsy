@@ -6,7 +6,7 @@
 # Drowsy
 Easy to use, lightweight java framework, built on top of JDBC that allows you to build high performance DB access for your Java applications, without the typical productivity and reliability penalties of not using an ORM.
 
-![alt text][bear]
+![alt text][bear] Drowsy, the bear
 
 <b>Things you can do with Drowsy</b>  
 - Prevent resource leaks caused by developer oopsies, such as unclosed connections, result sets or statements  
@@ -87,7 +87,7 @@ Drowsy uses [Jindy](https://github.com/irenical/jindy) for configuration, so a J
 </dependency>
 ```
 
-[bear]:https://www.irenical.org/drowsy/bear.jpg "Sometimes, to hibernate is just too much - Drowsy the bear"
+[bear]:https://www.irenical.org/drowsy/bear.jpg "Sometimes, to hibernate is just too much - Drowsy, the bear"
 
 [maven]:http://search.maven.org/#search|gav|1|g:"org.irenical.drowsy"%20AND%20a:"drowsy"
 [maven img]:https://maven-badges.herokuapp.com/maven-central/org.irenical.drowsy/drowsy/badge.svg
