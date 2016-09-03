@@ -6,7 +6,8 @@
 # Drowsy
 Easy to use, lightweight java framework, built on top of JDBC that allows you to build high performance DB access for your Java applications, without the typical productivity and reliability penalties of not using an ORM.
 
-![alt text][bear] Drowsy, the bear
+![alt text][bear]  
+Drowsy, the bear
 
 <b>Things you can do with Drowsy</b>  
 - Prevent resource leaks caused by developer oopsies, such as unclosed connections, result sets or statements  
