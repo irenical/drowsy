@@ -88,7 +88,7 @@ Drowsy uses [Jindy](https://github.com/irenical/jindy) for configuration, so a J
 </dependency>
 ```
 
-[bear]:https://www.irenical.org/drowsy/bear.jpg "Sometimes, to hibernate is just too much - Drowsy, the bear"
+[bear]:https://www.irenical.org/drowsy/bear.jpg "Sometimes, hibernate is just too much - Drowsy, the bear"
 
 [maven]:http://search.maven.org/#search|gav|1|g:"org.irenical.drowsy"%20AND%20a:"drowsy"
 [maven img]:https://maven-badges.herokuapp.com/maven-central/org.irenical.drowsy/drowsy/badge.svg
