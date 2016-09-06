@@ -32,23 +32,26 @@ In it you can find the following modules:
 <h3>DataSource</h3>
 [org.irenical.drowsy.datasource]  
 A DataSource implementation with built-in dynamic configuration, allowing you to change any property at runtime. It's built upon [HikariCP](https://github.com/brettwooldridge/HikariCP), [Flyway](https://github.com/flyway/flyway) and [Jindy](https://github.com/irenical/jindy).  
-[wiki](https://github.com/irenical/drowsy/wiki/DataSource)
+[DataSource's module wiki](https://github.com/irenical/drowsy/wiki/DataSource)
 
 <h3>Transaction</h3>
 [org.irenical.drowsy.transaction]  
-Models database operations at the connection and transaction level. Ensures resource deallocation, transaction commit and rollback on error.
+Models database operations at the connection and transaction level. Ensures resource deallocation, transaction commit and rollback on error.  
+[Transaction's module wiki](https://github.com/irenical/drowsy/wiki/Transaction)
 
 <h3>Query</h3>
 [org.irenical.drowsy.query]  
 Query builder classes that help you build prepared statements.
+[Query's module wiki](https://github.com/irenical/drowsy/wiki/Query)
 
 <h3>Mapper</h3>
 [org.irenical.drowsy.mapper]  
-Simple ResultSet to bean mapping.
+Simple ResultSet to bean mapping.  
+[Mapper's module wiki](https://github.com/irenical/drowsy/wiki/Mapper)
 
 <h3>Drowsy</h3>
 [org.irenical.drowsy]  
-The full bundle. Glues all the modules together in a simplified, easy to use API.
+The full bundle. Glues all the modules together in a simplified, easy to use API.  
 
 ## Usage
 Note: You can use the modules separately, these examples bellow apply when you're using the entire Drowsy bundle.  
