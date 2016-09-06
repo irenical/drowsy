@@ -9,17 +9,17 @@ Easy to use, lightweight java framework, built on top of JDBC that allows you to
 ![alt text][bear]  
 Drowsy, the bear
 
-<b>Things you can do with Drowsy</b>  
+**Things you can do with Drowsy**  
 - Prevent resource leaks caused by developer oopsies, such as unclosed connections, result sets or statements  
 - Build SQL queries with little boilerplate and good legibility, without sacrificing the ability to do weird stuff  
 - Trivial ResultSet to Java objects mapping  
 - Truly modular framework, allowing the developer to pick and choose what features of Drowsy to use, even in a multiple framework context  
 
-<b>Things you cannot expect from Drowsy</b>  
+**Things you cannot expect from Drowsy**  
 - Hiding the relational model from your application  
 - Non-JDBC data sources support  
 
-<h2>Drowsy Modules</h2>
+## Drowsy Modules
 As of now, Drowsy is still a single project.
 ```maven
 <dependency>
@@ -29,34 +29,34 @@ As of now, Drowsy is still a single project.
 </dependency>
 ```
 In it you can find the following modules:
-<h3>DataSource</h3>
+### DataSource
 [org.irenical.drowsy.datasource]  
 A DataSource implementation with built-in dynamic configuration, allowing you to change any property at runtime. It's built upon [HikariCP](https://github.com/brettwooldridge/HikariCP), [Flyway](https://github.com/flyway/flyway) and [Jindy](https://github.com/irenical/jindy).  
 [DataSource's module wiki](https://github.com/irenical/drowsy/wiki/DataSource)
 
-<h3>Transaction</h3>
+### Transaction
 [org.irenical.drowsy.transaction]  
 Models database operations at the connection and transaction level. Ensures resource deallocation, transaction commit and rollback on error.  
 [Transaction's module wiki](https://github.com/irenical/drowsy/wiki/Transaction)
 
-<h3>Query</h3>
+### Query
 [org.irenical.drowsy.query]  
 Query builder classes that help you build prepared statements.  
 [Query's module wiki](https://github.com/irenical/drowsy/wiki/Query)
 
-<h3>Mapper</h3>
+### Mapper
 [org.irenical.drowsy.mapper]  
 Simple ResultSet to bean mapping.  
 [Mapper's module wiki](https://github.com/irenical/drowsy/wiki/Mapper)
 
-<h3>Drowsy</h3>
+### Drowsy
 [org.irenical.drowsy]  
 The full bundle. Glues all the modules together in a simplified, easy to use API.  
 
 ## Usage
 Note: You can use the modules separately, these examples bellow apply when you're using the entire Drowsy bundle.  
 
-<b>Life cycle</b>
+**Life cycle**
 ```java
 Drowsy drowsy = new Drowsy();
 drowsy.start();
@@ -64,7 +64,7 @@ drowsy.start();
 drowsy.stop();
 ```
 
-<b>One liner select</b>
+**One liner select**
 ```java
 List<LegitPerson> got = drowsy.read(SelectBuilder.create("select * from people").build(), LegitPerson.class);
 ```
