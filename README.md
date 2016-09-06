@@ -31,7 +31,8 @@ As of now, Drowsy is still a single project.
 In it you can find the following modules:
 <h3>DataSource</h3>
 [org.irenical.drowsy.datasource]  
-A DataSource implementation with built-in dynamic configuration, allowing you to change any property at runtime. It's built uppon [HikariCP](https://github.com/brettwooldridge/HikariCP), [Flyway](https://github.com/flyway/flyway) and [Jindy](https://github.com/irenical/jindy).
+A DataSource implementation with built-in dynamic configuration, allowing you to change any property at runtime. It's built upon [HikariCP](https://github.com/brettwooldridge/HikariCP), [Flyway](https://github.com/flyway/flyway) and [Jindy](https://github.com/irenical/jindy).  
+[wiki](https://github.com/irenical/drowsy/wiki/DataSource)
 
 <h3>Transaction</h3>
 [org.irenical.drowsy.transaction]  
