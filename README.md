@@ -41,7 +41,7 @@ Models database operations at the connection and transaction level. Ensures reso
 
 <h3>Query</h3>
 [org.irenical.drowsy.query]  
-Query builder classes that help you build prepared statements.
+Query builder classes that help you build prepared statements.  
 [Query's module wiki](https://github.com/irenical/drowsy/wiki/Query)
 
 <h3>Mapper</h3>
