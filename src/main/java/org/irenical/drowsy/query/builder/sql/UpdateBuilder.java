@@ -35,7 +35,15 @@ public class UpdateBuilder extends ExpressionBuilder<UpdateBuilder> {
     }
     return literal(lvalue).literal("=").literal(rvalue);
   }
-  
+
+  public UpdateBuilder set(String lvalue) {
+    return literal(" set ").literal(lvalue);
+  }
+
+  public UpdateBuilder from(String lvalue) {
+    return literal(" from ").literal(lvalue);
+  }
+
   public UpdateBuilder where(String lvalue) {
     return literal(" where ").literal(lvalue);
   }
