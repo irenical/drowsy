@@ -16,28 +16,28 @@ public class UpdateBuilder extends ExpressionBuilder<UpdateBuilder> {
     return result;
   }
 
-  public static UpdateBuilder table(String tableName) {
+  public static UpdateBuilder update(String tableName) {
     return create("update " + tableName);
   }
 
-  public UpdateBuilder setParam(String lvalue, Object param) {
+  public UpdateBuilder setParam(String column, Object value) {
     if(!firstSet){
-      literal(",");
+      literal(", ");
+    } else {
+      literal(" set ");
       firstSet=false;
     }
-    return literal(lvalue).literal("=").param(param);
+    return literal(column).literal("=").param(value);
   }
-
-  public UpdateBuilder setExpression(String lvalue, Object rvalue) {
+  
+  public UpdateBuilder setLiteral(String column, String literal) {
     if(!firstSet){
-      literal(",");
+      literal(", ");
+    } else {
+      literal(" set ");
       firstSet=false;
     }
-    return literal(lvalue).literal("=").literal(rvalue);
-  }
-
-  public UpdateBuilder set(String lvalue) {
-    return literal(" set ").literal(lvalue);
+    return literal(column).literal("=").literal(literal);
   }
 
   public UpdateBuilder from(String lvalue) {
