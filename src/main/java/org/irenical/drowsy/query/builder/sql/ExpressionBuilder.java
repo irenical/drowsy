@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.irenical.drowsy.query.Query.TYPE;
 
-public abstract class ExpressionBuilder<BUILDER_CLASS extends BaseQueryBuilder<BUILDER_CLASS>>
+public class ExpressionBuilder<BUILDER_CLASS extends BaseQueryBuilder<BUILDER_CLASS>>
     extends BaseQueryBuilder<BUILDER_CLASS> {
 
   protected ExpressionBuilder(TYPE type) {
@@ -19,49 +19,43 @@ public abstract class ExpressionBuilder<BUILDER_CLASS extends BaseQueryBuilder<B
     if (that == null || that.length == 0) {
       return literal(" in");
     } else {
-      return eq(that);
+      return params(Arrays.asList(that), " in(", ")", ", ");
     }
   }
 
   public BUILDER_CLASS eq(Object... that) {
-    if (that != null) {
-      if (that.length == 1) {
-        if (that[0] == null) {
-          return literal(" is null");
-        } else {
-          return literal("=").param(that[0]);
-        }
+    if (that == null || that.length == 0) {
+      return literal("=");
+    }
+    if (that.length == 1) {
+      if (that[0] == null) {
+        return literal(" is null");
       } else {
-        return params(Arrays.asList(that), " in(", ")", ",");
+        return literal("=").param(that[0]);
       }
     } else {
-      return literal("=");
+      return in(that);
     }
   }
 
   public BUILDER_CLASS notEq(Object... that) {
-    if (that != null) {
-      if (that.length == 1) {
-        if (that[0] == null) {
-          return literal(" is not null");
-        } else {
-          return literal("!=").param(that[0]);
-        }
+    if (that == null || that.length == 0) {
+      return literal("!=");
+    }
+    if (that.length == 1) {
+      if (that[0] == null) {
+        return literal(" is not null");
       } else {
-        literal(" not");
-        return in(that);
+        return literal("!=").param(that[0]);
       }
     } else {
-      return literal("!=");
+      not();
+      return in(that);
     }
   }
 
   private BUILDER_CLASS binaryOperation(String op, Object that) {
-    if (that == null) {
-      return literal(op);
-    } else {
-      return literal(op).param(that);
-    }
+    return literal(op).param(that);
   }
 
   public BUILDER_CLASS greater(Object that) {

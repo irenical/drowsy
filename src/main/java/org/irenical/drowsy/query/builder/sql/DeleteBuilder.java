@@ -13,6 +13,12 @@ public class DeleteBuilder extends ExpressionBuilder<DeleteBuilder> {
     result.literal(sql);
     return result;
   }
+  
+  public static DeleteBuilder delete(String tableName){
+    DeleteBuilder result = new DeleteBuilder();
+    result.literal("delete from ").literal(tableName);
+    return result;
+  }
 
   public static DeleteBuilder from(String tableName) {
     return create("delete from " + tableName);
