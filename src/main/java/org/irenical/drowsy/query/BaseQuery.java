@@ -54,17 +54,17 @@ public class BaseQuery implements Query {
     } else {
       ps = connection.prepareStatement(query);
     }
-    setParameters(ps, parameters, 1);
+    setParameters(ps, parameters);
     return ps;
   }
 
-  private int setParameters(PreparedStatement ps, Collection<Object> parameters, int current) throws SQLException {
+  private void setParameters(PreparedStatement ps, Collection<Object> parameters) throws SQLException {
     if (parameters != null) {
+      int current = 1;
       for (Object param : parameters) {
         setInputParameter(ps, current++, param);
       }
     }
-    return current;
   }
 
   private void setInputParameter(PreparedStatement ps, int idx, Object value) throws SQLException {

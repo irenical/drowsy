@@ -3,7 +3,7 @@ package org.irenical.drowsy.query.builder.sql;
 import org.irenical.drowsy.query.Query.TYPE;
 
 public class UpdateBuilder extends ExpressionBuilder<UpdateBuilder> {
-  
+
   private boolean firstSet = true;
 
   protected UpdateBuilder() {
@@ -20,22 +20,42 @@ public class UpdateBuilder extends ExpressionBuilder<UpdateBuilder> {
     return create("update " + tableName);
   }
 
+  /**
+   * Adds <i>set column=?</i> to the query and appends the value to the
+   * parameter list. Use for columnA=some input value. For something like
+   * columnA=columnB use {@link #setLiteral(String, String) setLiteral} instead
+   * 
+   * @param column
+   *          - the column name
+   * @param value
+   *          - the variable value
+   * @return
+   */
   public UpdateBuilder setParam(String column, Object value) {
-    if(!firstSet){
+    if (!firstSet) {
       literal(", ");
     } else {
       literal(" set ");
-      firstSet=false;
+      firstSet = false;
     }
     return literal(column).literal("=").param(value);
   }
-  
+
+  /**
+   * Adds <i>set column=literal</i> to the query. Use for columnA=columnB
+   * 
+   * @param column
+   *          - the column name
+   * @param literal
+   *          - the literal value
+   * @return the builder
+   */
   public UpdateBuilder setLiteral(String column, String literal) {
-    if(!firstSet){
+    if (!firstSet) {
       literal(", ");
     } else {
       literal(" set ");
-      firstSet=false;
+      firstSet = false;
     }
     return literal(column).literal("=").literal(literal);
   }
