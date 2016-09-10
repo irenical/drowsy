@@ -45,11 +45,6 @@ public class BaseQuery implements Query {
   }
 
   @Override
-  public TYPE getType() {
-    return type;
-  }
-
-  @Override
   public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
     PreparedStatement ps;
     if (TYPE.CALL.equals(type)) {
@@ -63,16 +58,10 @@ public class BaseQuery implements Query {
     return ps;
   }
 
-  @SuppressWarnings("unchecked")
-  private int setParameters(PreparedStatement ps, Collection<Object> parameters, int current)
-      throws SQLException {
+  private int setParameters(PreparedStatement ps, Collection<Object> parameters, int current) throws SQLException {
     if (parameters != null) {
       for (Object param : parameters) {
-        if (param instanceof Collection) {
-          current = setParameters(ps, (Collection<Object>) param, current);
-        } else {
-          setInputParameter(ps, current++, param);
-        }
+        setInputParameter(ps, current++, param);
       }
     }
     return current;
@@ -96,8 +85,7 @@ public class BaseQuery implements Query {
       if (ps instanceof CallableStatement) {
         setOutputParameter((CallableStatement) ps, idx, (Class<?>) value);
       } else {
-        throw new IllegalArgumentException(
-            "Invalid parameter type for non-CallableStatement: " + value.getClass());
+        throw new IllegalArgumentException("Invalid parameter type for non-CallableStatement: " + value.getClass());
       }
       ps.setString(idx, value.toString());
     } else {
@@ -105,8 +93,7 @@ public class BaseQuery implements Query {
     }
   }
 
-  private void setOutputParameter(CallableStatement statement, int idx, Class<?> value)
-      throws SQLException {
+  private void setOutputParameter(CallableStatement statement, int idx, Class<?> value) throws SQLException {
     if (String.class.getName().equals(value.getName())) {
       statement.registerOutParameter(idx, java.sql.Types.VARCHAR);
     } else if (Float.class.getName().equals(value.getName())) {

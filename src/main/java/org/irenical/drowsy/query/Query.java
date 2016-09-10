@@ -11,8 +11,6 @@ public interface Query {
     SELECT, INSERT, UPDATE, DELETE, CALL
   };
 
-  TYPE getType();
-
   List<Object> getParameters();
 
   String getQuery();

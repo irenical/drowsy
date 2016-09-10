@@ -24,8 +24,7 @@ public class PGTestUtils {
   @BeforeClass
   public static void startPg() throws ClassNotFoundException, IOException, SQLException {
     Class.forName("org.postgresql.Driver");
-    PostgresStarter<PostgresExecutable, PostgresProcess> runtime = PostgresStarter
-        .getDefaultInstance();
+    PostgresStarter<PostgresExecutable, PostgresProcess> runtime = PostgresStarter.getDefaultInstance();
     postgresConfig = PostgresConfig.defaultWithDbName("test");
     PostgresExecutable exec = runtime.prepare(postgresConfig);
     postgresProcess = exec.start();
@@ -33,21 +32,27 @@ public class PGTestUtils {
 
     // create table
     PreparedStatement createPeopleTableStatement = connection
-        .prepareStatement("create table people (id serial primary key, name text)");
+        .prepareStatement("create table people (id serial primary key, name text, birth timestamptz)");
     createPeopleTableStatement.executeUpdate();
     createPeopleTableStatement.close();
 
+    // create procedure
+    PreparedStatement createProcedureStatement = connection.prepareStatement(
+        "CREATE OR REPLACE FUNCTION create_person(name text, birth timestamptz) " + "RETURNS void AS $$ " + "BEGIN "
+            + "  INSERT INTO people(name,birth) VALUES (name, birth); " + "END; " + "$$ LANGUAGE plpgsql;");
+    createProcedureStatement.executeUpdate();
+    createProcedureStatement.close();
+
     // create data
-    PreparedStatement createPersonStatement = connection
-        .prepareStatement("insert into people(name) values('Boda')");
+    PreparedStatement createPersonStatement = connection.prepareStatement("insert into people(name) values('Boda')");
     createPersonStatement.executeUpdate();
     createPersonStatement.close();
 
     connection.commit();
     connection.close();
 
-    String url = String.format("jdbc:postgresql://%s:%s/%s?", postgresConfig.net().host(),
-        postgresConfig.net().port(), postgresConfig.storage().dbName());
+    String url = String.format("jdbc:postgresql://%s:%s/%s?", postgresConfig.net().host(), postgresConfig.net().port(),
+        postgresConfig.storage().dbName());
     Config config = ConfigFactory.getConfig();
     String user = System.getProperty("user.name");
     config.setProperty("jdbc.jdbcUrl", url);
@@ -60,12 +65,10 @@ public class PGTestUtils {
     postgresProcess.stop();
   }
 
-  protected static Connection createConnection(boolean autocommit)
-      throws SQLException, IOException {
+  protected static Connection createConnection(boolean autocommit) throws SQLException, IOException {
     String user = System.getProperty("user.name");
-    String url = String.format("jdbc:postgresql://%s:%s/%s?user=%s&password=%s",
-        postgresConfig.net().host(), postgresConfig.net().port(), postgresConfig.storage().dbName(),
-        user, null);
+    String url = String.format("jdbc:postgresql://%s:%s/%s?user=%s&password=%s", postgresConfig.net().host(),
+        postgresConfig.net().port(), postgresConfig.storage().dbName(), user, null);
     Connection connection = DriverManager.getConnection(url);
     connection.setAutoCommit(autocommit);
     return connection;

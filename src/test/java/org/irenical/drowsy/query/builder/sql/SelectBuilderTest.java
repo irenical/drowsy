@@ -164,5 +164,16 @@ public class SelectBuilderTest extends BaseBuilder {
     SelectBuilder qb = SelectBuilder.select("*").from("some_table").where("some_field").eq("some_value").or("some_other_field").eq("some_other_value");
     assertBuilder(qb, "select * from some_table where some_field=? or some_other_field=?", Arrays.asList("some_value","some_other_value"));
   }
+
+  @Test
+  public void testInCollection(){
+    SelectBuilder qb = SelectBuilder.select("*").from("some_table").where("some_field").in(Arrays.asList("some_value","some_other_value"));
+    assertBuilder(qb, "select * from some_table where some_field in(?, ?)", Arrays.asList("some_value","some_other_value"));
+  }
   
+  @Test
+  public void testNotInCollection(){
+    SelectBuilder qb = SelectBuilder.select("*").from("some_table").where("some_field").not().in(Arrays.asList("some_value","some_other_value"));
+    assertBuilder(qb, "select * from some_table where some_field not in(?, ?)", Arrays.asList("some_value","some_other_value"));
+  }
 }

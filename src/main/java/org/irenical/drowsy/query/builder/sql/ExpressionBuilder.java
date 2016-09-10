@@ -1,6 +1,9 @@
 package org.irenical.drowsy.query.builder.sql;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import org.irenical.drowsy.query.Query.TYPE;
 
@@ -19,7 +22,13 @@ public class ExpressionBuilder<BUILDER_CLASS extends BaseQueryBuilder<BUILDER_CL
     if (that == null || that.length == 0) {
       return literal(" in");
     } else {
-      return params(Arrays.asList(that), " in(", ")", ", ");
+      List<Object> params = null;
+      if(that.length==1 && (that[0] instanceof Collection<?>)){
+        params = new ArrayList<>(((Collection<?>)that[0]));
+      } else {
+        params = Arrays.asList(that);
+      }
+      return params(params, " in(", ")", ", ");
     }
   }
 
