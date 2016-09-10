@@ -26,9 +26,9 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class BaseQueryTest extends PGTestUtils {
 
-  static HikariDataSource ds;
+  protected static HikariDataSource ds;
 
-  Connection c;
+  protected Connection c;
 
   @BeforeClass
   public static void startHikari() {
@@ -55,27 +55,17 @@ public class BaseQueryTest extends PGTestUtils {
     c.close();
   }
 
-  private void assertPreparedStatement(PreparedStatement ps, boolean isRead) throws SQLException {
-    Assert.assertNotNull(ps);
-    ResultSet rs = null;
-    if (isRead) {
-      rs = ps.executeQuery();
-    } else {
-      ps.executeUpdate();
-      rs = ps.getGeneratedKeys();
-    }
-    Assert.assertNotNull(rs);
-    Assert.assertTrue(rs.next());
-    rs.close();
-    ps.close();
-  }
-
   @Test
   public void testSelect() throws SQLException {
     BaseQuery q = new BaseQuery();
     q.setQuery("select * from people");
     PreparedStatement ps = q.createPreparedStatement(c);
-    assertPreparedStatement(ps, true);
+    Assert.assertNotNull(ps);
+    ResultSet rs = ps.executeQuery();
+    Assert.assertNotNull(rs);
+    Assert.assertTrue(rs.next());
+    rs.close();
+    ps.close();
   }
 
   @Test
@@ -105,7 +95,13 @@ public class BaseQueryTest extends PGTestUtils {
     q.setType(TYPE.INSERT);
     q.setQuery("insert into people(name) values('obama')");
     PreparedStatement ps = q.createPreparedStatement(c);
-    assertPreparedStatement(ps, false);
+    Assert.assertNotNull(ps);
+    ps.executeUpdate();
+    ResultSet rs = ps.getGeneratedKeys();
+    Assert.assertNotNull(rs);
+    Assert.assertTrue(rs.next());
+    rs.close();
+    ps.close();
   }
 
   @Test
