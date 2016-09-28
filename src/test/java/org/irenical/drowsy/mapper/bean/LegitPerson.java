@@ -2,24 +2,24 @@ package org.irenical.drowsy.mapper.bean;
 
 public class LegitPerson {
 
-  private int id;
+  private int Id;   // fields "cammel"-cased for testing purposes
 
-  private String name;
+  private String Name;
 
   public void setId(int id) {
-    this.id = id;
+    this.Id = id;
   }
 
   public void setName(String name) {
-    this.name = name;
+    this.Name = name;
   }
 
   public int getId() {
-    return id;
+    return Id;
   }
 
   public String getName() {
-    return name;
+    return Name;
   }
 
 }
