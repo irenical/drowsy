@@ -22,7 +22,7 @@ public interface QueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDER_CLASS>>
    */
   public abstract BUILDER_CLASS literal(Object sql);
 
-  public abstract BUILDER_CLASS literals(Iterable<Object> sql, String prefix, String suffix,
+  public abstract BUILDER_CLASS literals(Iterable<?> sql, String prefix, String suffix,
       String separator);
   
   /**
@@ -48,7 +48,7 @@ public interface QueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDER_CLASS>>
    *          - a literal separating each parameter
    * @return the builder
    */
-  public abstract BUILDER_CLASS params(Iterable<Object> params, String prefix, String suffix,
+  public abstract BUILDER_CLASS params(Iterable<?> params, String prefix, String suffix,
       String separator);
 
 }

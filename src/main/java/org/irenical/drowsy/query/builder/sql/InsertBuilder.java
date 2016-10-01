@@ -29,7 +29,7 @@ public class InsertBuilder extends BaseQueryBuilder<InsertBuilder> {
 
   public InsertBuilder values(Object... values) {
     if (values != null && values.length > 0) {
-      params(Arrays.asList(values), " values(", ")", ",");
+      params(Arrays.asList(values), " values(", ")", ", ");
     }
     return this;
   }

@@ -63,7 +63,7 @@ public class UpdateBuilder extends ExpressionBuilder<UpdateBuilder> {
   public UpdateBuilder from(String lvalue) {
     return literal(" from ").literal(lvalue);
   }
-
+  
   public UpdateBuilder where(String lvalue) {
     return literal(" where ").literal(lvalue);
   }

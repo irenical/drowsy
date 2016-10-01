@@ -41,7 +41,7 @@ public abstract class BaseQueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDE
 
   @SuppressWarnings("unchecked")
   @Override
-  public BUILDER_CLASS literals(Iterable<Object> sql, String prefix, String suffix, String separator) {
+  public BUILDER_CLASS literals(Iterable<?> sql, String prefix, String suffix, String separator) {
     if (sql != null) {
       boolean first = true;
       for (Object s : sql) {
@@ -72,7 +72,7 @@ public abstract class BaseQueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDE
 
   @SuppressWarnings("unchecked")
   @Override
-  public BUILDER_CLASS params(Iterable<Object> values, String prefix, String suffix, String separator) {
+  public BUILDER_CLASS params(Iterable<?> values, String prefix, String suffix, String separator) {
     if (values != null) {
       boolean first = true;
       for (Object value : values) {

@@ -66,4 +66,12 @@ public class UpdateBuilderTest extends BaseBuilder {
         Arrays.asList("some_value", "some_other_value", 1337));
   }
   
+  @Test
+  public void testFromValuesUpdate() {
+    QueryBuilder<?> qb = UpdateBuilder.update("some_table").setParam("some_column", "some_value")
+        .setParam("some_other_column", "some_other_value").from("somewhere").where("id").eq(1337);
+    assertBuilder(qb, "update some_table set some_column=?, some_other_column=? from somewhere where id=?",
+        Arrays.asList("some_value", "some_other_value", 1337));
+  }
+  
 }
