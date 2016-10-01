@@ -4,10 +4,12 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +26,12 @@ public class BeanMapper {
         List<String> cols = new LinkedList<>();
         ResultSetMetaData md = resultSet.getMetaData();
         for (int c = 1; c <= md.getColumnCount(); ++c) {
-          cols.add(md.getColumnName(c));
+          cols.add(md.getColumnName(c).toLowerCase());
         }
         Map<String, Field> fields = new HashMap<>();
         for (Field field : beanClass.getDeclaredFields()) {
           field.setAccessible(true);
-          fields.put(field.getName(), field);
+          fields.put(field.getName().toLowerCase(), field);
         }
         do {
           OBJECT bean = beanClass.newInstance();
@@ -57,7 +59,9 @@ public class BeanMapper {
         continue;
       }
       Class<?> fieldType = getObjectType(field.getType());
-      if (!fieldType.isAssignableFrom(cell.getClass())) {
+      if (fieldType == String.class && (cell.getClass() == UUID.class || cell.getClass() == Timestamp.class)) {
+        field.set(bean, cell.toString());
+      } else if (!fieldType.isAssignableFrom(cell.getClass())) {
         throw new SQLException("Field " + col + " on class " + bean.getClass()
             + " type mismatch. Expected " + cell.getClass());
       } else {
