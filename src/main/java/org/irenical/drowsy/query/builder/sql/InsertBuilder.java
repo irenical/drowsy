@@ -39,7 +39,7 @@ public class InsertBuilder extends BaseQueryBuilder<InsertBuilder> {
     return this;
   }
 
-  public InsertBuilder from(Query subquery) {
+  public InsertBuilder subquery(Query subquery) {
     literal(" (").literal(subquery.getQuery()).literal(")");
     addParameters(subquery.getParameters());
     return this;
