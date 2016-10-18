@@ -31,7 +31,7 @@ public class InsertBuilderTest extends BaseBuilder {
   public void testSubselect() {
     String query = "insert into some_table(some_column) (select some_other_column from some_other_table where id=?)";
     QueryBuilder<?> sel = SelectBuilder.select("some_other_column").from("some_other_table").where("id").eq(1);
-    QueryBuilder<?> qb = InsertBuilder.into("some_table").columns("some_column").from(sel.build());
+    QueryBuilder<?> qb = InsertBuilder.into("some_table").columns("some_column").subquery(sel.build());
     assertBuilder(qb, query, Arrays.asList(1));
   }
   

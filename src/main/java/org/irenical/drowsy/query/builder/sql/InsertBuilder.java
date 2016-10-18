@@ -2,7 +2,6 @@ package org.irenical.drowsy.query.builder.sql;
 
 import java.util.Arrays;
 
-import org.irenical.drowsy.query.Query;
 import org.irenical.drowsy.query.Query.TYPE;
 
 public class InsertBuilder extends BaseQueryBuilder<InsertBuilder> {
@@ -36,12 +35,6 @@ public class InsertBuilder extends BaseQueryBuilder<InsertBuilder> {
     if (values != null && values.length > 0) {
       params(Arrays.asList(values), " values(", ")", ", ");
     }
-    return this;
-  }
-
-  public InsertBuilder subquery(Query subquery) {
-    literal(" (").literal(subquery.getQuery()).literal(")");
-    addParameters(subquery.getParameters());
     return this;
   }
 

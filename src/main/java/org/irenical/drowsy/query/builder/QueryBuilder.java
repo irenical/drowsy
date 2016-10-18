@@ -50,13 +50,13 @@ public interface QueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDER_CLASS>>
   public BUILDER_CLASS params(Iterable<?> params, String prefix, String suffix, String separator);
 
   /**
-   * Adds one or more parameters to the query's parameter list. No <b>?</b> will
-   * be appended to the query
+   * Appends the query's string value to this query builder, prefixed by
+   * <b>(</b> and suffixed by <b>)</b>. Adds given query's parameters to the
+   * current builder parameter list.
    * 
-   * @param param
-   *          - the objects representing the parameters
+   * @param subquery - the subquery
    * @return the builder
    */
-  public BUILDER_CLASS addParameters(Iterable<?> values);
+  public BUILDER_CLASS subquery(Query subquery);
 
 }

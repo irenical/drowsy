@@ -62,7 +62,7 @@ public abstract class BaseQueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDE
     }
     return (BUILDER_CLASS) this;
   }
-  
+
   @SuppressWarnings("unchecked")
   @Override
   public BUILDER_CLASS param(Object value) {
@@ -93,14 +93,13 @@ public abstract class BaseQueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDE
     }
     return (BUILDER_CLASS) this;
   }
-  
+
   @SuppressWarnings("unchecked")
   @Override
-  public BUILDER_CLASS addParameters(Iterable<?> values) {
-    for(Object p : values) {
-      parameters.add(p);
-    }
+  public BUILDER_CLASS subquery(Query subquery) {
+    literal(" (").literal(subquery.getQuery()).literal(")");
+    parameters.addAll(subquery.getParameters());
     return (BUILDER_CLASS) this;
   }
-  
+
 }
