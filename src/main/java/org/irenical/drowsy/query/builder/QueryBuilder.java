@@ -20,23 +20,22 @@ public interface QueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDER_CLASS>>
    *          - the SQL query fragment to be appended
    * @return the builder
    */
-  public abstract BUILDER_CLASS literal(Object sql);
+  public BUILDER_CLASS literal(Object sql);
 
-  public abstract BUILDER_CLASS literals(Iterable<?> sql, String prefix, String suffix,
-      String separator);
-  
+  public BUILDER_CLASS literals(Iterable<?> sql, String prefix, String suffix, String separator);
+
   /**
-   * Append a parameter. A ? will be appended to the query
+   * Append a parameter. A <b>?</b> will be appended to the query
    * 
    * @param param
    *          - the object representing the value
    * @return the builder
    */
-  public abstract BUILDER_CLASS param(Object param);
-  
+  public BUILDER_CLASS param(Object param);
+
   /**
-   * Append multiple values. A ? will be appended to the query for each value
-   * Useful for IN expressions
+   * Append multiple values. A <b>?</b> will be appended to the query for each
+   * value Useful for IN expressions
    * 
    * @param params
    *          - the objects representing the parameters
@@ -48,7 +47,16 @@ public interface QueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDER_CLASS>>
    *          - a literal separating each parameter
    * @return the builder
    */
-  public abstract BUILDER_CLASS params(Iterable<?> params, String prefix, String suffix,
-      String separator);
+  public BUILDER_CLASS params(Iterable<?> params, String prefix, String suffix, String separator);
+
+  /**
+   * Adds one or more parameters to the query's parameter list. No <b>?</b> will
+   * be appended to the query
+   * 
+   * @param param
+   *          - the objects representing the parameters
+   * @return the builder
+   */
+  public BUILDER_CLASS addParameters(Iterable<?> values);
 
 }

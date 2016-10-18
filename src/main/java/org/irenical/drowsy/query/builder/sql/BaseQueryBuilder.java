@@ -1,5 +1,6 @@
 package org.irenical.drowsy.query.builder.sql;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public abstract class BaseQueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDE
   @Override
   public Query build() {
     BaseQuery result = new BaseQuery();
-    result.setParameters(new LinkedList<>(parameters));
+    result.setParameters(Collections.unmodifiableList(parameters));
     result.setQuery(sb.toString());
     result.setType(type);
     return result;
@@ -89,6 +90,15 @@ public abstract class BaseQueryBuilder<BUILDER_CLASS extends QueryBuilder<BUILDE
       if (!first && suffix != null) {
         sb.append(suffix);
       }
+    }
+    return (BUILDER_CLASS) this;
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public BUILDER_CLASS addParameters(Iterable<?> values) {
+    for(Object p : values) {
+      parameters.add(p);
     }
     return (BUILDER_CLASS) this;
   }
