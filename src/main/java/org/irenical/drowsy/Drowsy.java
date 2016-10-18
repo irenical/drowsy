@@ -117,7 +117,7 @@ public class Drowsy implements LifeCycle {
   public boolean isRunning() {
     return transactionDataSource.isRunning() && operationDataSource.isRunning() && readOnlyDataSource.isRunning();
   }
-  
+
   public <OUTPUT> OUTPUT read(Query query, JdbcFunction<ResultSet,OUTPUT> reader) throws SQLException {
     return new JdbcOperation<OUTPUT>() {
       @Override
@@ -136,6 +136,17 @@ public class Drowsy implements LifeCycle {
         return mapper.map(statement.executeQuery(), beanClass);
       }
     }.run(readOnlyDataSource);
+  }
+
+  public <OUTPUT> OUTPUT write(Query query, JdbcFunction<ResultSet,OUTPUT> reader) throws SQLException {
+    return new JdbcOperation<OUTPUT>() {
+      @Override
+      protected OUTPUT execute(Connection connection) throws SQLException {
+        PreparedStatement statement = query.createPreparedStatement(connection);
+        statement.executeUpdate();
+        return reader.apply(statement.getGeneratedKeys());
+      }
+    }.run(operationDataSource);
   }
 
   public <OBJECT> List<OBJECT> write(Query query, Class<OBJECT> beanClass) throws SQLException {
