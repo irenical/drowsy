@@ -146,7 +146,7 @@ public class Drowsy implements LifeCycle {
         statement.executeUpdate();
         return reader.apply(statement.getGeneratedKeys());
       }
-    }.run(readOnlyDataSource);
+    }.run(operationDataSource);
   }
 
   public <OBJECT> List<OBJECT> write(Query query, Class<OBJECT> beanClass) throws SQLException {
