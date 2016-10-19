@@ -25,7 +25,7 @@ As of now, Drowsy is still a single project.
 <dependency>
   <groupId>org.irenical.drowsy</groupId>
   <artifactId>drowsy</artifactId>
-  <version>0.0.8</version>
+  <version>0.0.10</version>
 </dependency>
 ```
 In it you can find the following modules:
