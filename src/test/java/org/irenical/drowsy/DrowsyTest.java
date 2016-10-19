@@ -18,7 +18,7 @@ public class DrowsyTest extends PGTestUtils {
     Drowsy drowsy = new Drowsy();
     drowsy.start();
     List<LegitPerson> got = drowsy
-        .read(SelectBuilder.create("select * from people").build(), LegitPerson.class);
+        .read(SelectBuilder.create("select * from people order by id limit 1").build(), LegitPerson.class);
     Assert.assertEquals(1, got.size());
     Assert.assertEquals("Boda", got.get(0).getName());
   }

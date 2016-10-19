@@ -47,6 +47,10 @@ public class PGTestUtils {
     PreparedStatement createPersonStatement = connection.prepareStatement("insert into people(name) values('Boda')");
     createPersonStatement.executeUpdate();
     createPersonStatement.close();
+    
+    createPersonStatement = connection.prepareStatement("insert into people(name) values('Buda')");
+    createPersonStatement.executeUpdate();
+    createPersonStatement.close();
 
     connection.commit();
     connection.close();
