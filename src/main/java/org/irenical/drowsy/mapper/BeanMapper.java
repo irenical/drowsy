@@ -18,8 +18,7 @@ public class BeanMapper {
 
   private static final Logger LOG = LoggerFactory.getLogger(BeanMapper.class);
 
-  public <OBJECT> List<OBJECT> map(ResultSet resultSet, Class<OBJECT> beanClass)
-      throws SQLException {
+  public <OBJECT> List<OBJECT> map(ResultSet resultSet, Class<OBJECT> beanClass) throws SQLException {
     List<OBJECT> result = new LinkedList<>();
     try {
       if (resultSet.next()) {
@@ -45,8 +44,7 @@ public class BeanMapper {
     return result;
   }
 
-  private <OBJECT> void rowToBean(OBJECT bean, ResultSet set, List<String> cols,
-      Map<String, Field> fields)
+  private <OBJECT> void rowToBean(OBJECT bean, ResultSet set, List<String> cols, Map<String, Field> fields)
       throws SQLException, IllegalArgumentException, IllegalAccessException {
     for (String col : cols) {
       Object cell = set.getObject(col);
@@ -62,8 +60,8 @@ public class BeanMapper {
       if (fieldType == String.class && (cell.getClass() == UUID.class || cell.getClass() == Timestamp.class)) {
         field.set(bean, cell.toString());
       } else if (!fieldType.isAssignableFrom(cell.getClass())) {
-        throw new SQLException("Field " + col + " on class " + bean.getClass()
-            + " type mismatch. Expected " + cell.getClass());
+        throw new SQLException(
+            "Field " + col + " on class " + bean.getClass() + " type mismatch. Expected " + cell.getClass());
       } else {
         field.set(bean, cell);
       }
@@ -90,8 +88,7 @@ public class BeanMapper {
       case "double":
         return Double.class;
       default:
-        throw new java.lang.UnsupportedOperationException(
-            "Primitive type not supported: " + type.getName());
+        throw new java.lang.UnsupportedOperationException("Primitive type not supported: " + type.getName());
       }
     } else {
       return type;

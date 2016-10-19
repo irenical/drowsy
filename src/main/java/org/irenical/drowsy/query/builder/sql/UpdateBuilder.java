@@ -42,7 +42,8 @@ public class UpdateBuilder extends ExpressionBuilder<UpdateBuilder> {
   }
 
   /**
-   * Adds <i>set column=literal</i> to the query. Use for columnA=columnB
+   * Adds <i>set column=literal</i> to the query. Useful for columnA=columnB
+   * like cases
    * 
    * @param column
    *          - the column name
@@ -63,7 +64,7 @@ public class UpdateBuilder extends ExpressionBuilder<UpdateBuilder> {
   public UpdateBuilder from(String lvalue) {
     return literal(" from ").literal(lvalue);
   }
-  
+
   public UpdateBuilder where(String lvalue) {
     return literal(" where ").literal(lvalue);
   }
