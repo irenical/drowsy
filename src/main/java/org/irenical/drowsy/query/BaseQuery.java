@@ -49,7 +49,7 @@ public class BaseQuery implements Query {
     PreparedStatement ps;
     if (TYPE.CALL.equals(type)) {
       ps = connection.prepareCall(query);
-    } else if (TYPE.INSERT.equals(type) || TYPE.UPDATE.equals(type)) {
+    } else if (TYPE.INSERT.equals(type)) {
       ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
     } else {
       ps = connection.prepareStatement(query);

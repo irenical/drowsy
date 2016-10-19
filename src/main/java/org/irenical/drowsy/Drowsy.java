@@ -143,8 +143,8 @@ public class Drowsy implements LifeCycle {
       @Override
       protected OUTPUT execute(Connection connection) throws SQLException {
         PreparedStatement statement = query.createPreparedStatement(connection);
-        statement.executeUpdate();
-        return reader.apply(statement.getGeneratedKeys());
+        statement.execute();
+        return reader.apply(statement.getResultSet());
       }
     }.run(operationDataSource);
   }
