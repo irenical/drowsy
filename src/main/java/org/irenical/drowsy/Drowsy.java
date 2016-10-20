@@ -38,7 +38,8 @@ public class Drowsy implements LifeCycle {
   private DrowsyDataSource readOnlyDataSource;
 
   /**
-   * Initialized a Drowsy object with configuration prefixed with 'jdbc'.
+   * Initialized a Drowsy object with configuration prefixed by 'jdbc'. You must
+   * call {@link start} before executing JDBC operations on this instance
    *
    * @see DrowsyDataSource
    */
@@ -59,6 +60,9 @@ public class Drowsy implements LifeCycle {
     this.config = config;
   }
 
+  /**
+   * Launches this Drowsy instance, initializing the underlying datasources
+   */
   @Override
   public void start() {
     transactionDataSource = new DrowsyDataSource(config) {
@@ -106,6 +110,9 @@ public class Drowsy implements LifeCycle {
     readOnlyDataSource.start();
   }
 
+  /**
+   * Stops this Drowsy instance, shutting down the underlying datasources
+   */
   @Override
   public void stop() {
     operationDataSource.stop();
@@ -113,12 +120,26 @@ public class Drowsy implements LifeCycle {
     readOnlyDataSource.stop();
   }
 
+  /**
+   * Checks if the underlying datasources are healthy
+   */
   @Override
   public boolean isRunning() {
     return transactionDataSource.isRunning() && operationDataSource.isRunning() && readOnlyDataSource.isRunning();
   }
 
-  public <OUTPUT> OUTPUT read(Query query, JdbcFunction<ResultSet,OUTPUT> reader) throws SQLException {
+  /**
+   * Atomically executes a read operation represented by given query
+   * 
+   * @param query
+   *          the read operation, usually a select
+   * @param reader
+   *          the lambda function ResultSet -> transaction output
+   * @return the transaction's output
+   * @throws SQLException
+   *           if an error occurs
+   */
+  public <OUTPUT> OUTPUT read(Query query, JdbcFunction<ResultSet, OUTPUT> reader) throws SQLException {
     return new JdbcOperation<OUTPUT>() {
       @Override
       protected OUTPUT execute(Connection connection) throws SQLException {
@@ -128,6 +149,17 @@ public class Drowsy implements LifeCycle {
     }.run(readOnlyDataSource);
   }
 
+  /**
+   * Atomically executes a read operation represented by given query.
+   * 
+   * @param query
+   *          the read operation, usually a select
+   * @param beanClass
+   *          a bean class whose fields directly match the query's columns
+   * @return the transaction's output
+   * @throws SQLException
+   *           if an error occurs
+   */
   public <OBJECT> List<OBJECT> read(Query query, Class<OBJECT> beanClass) throws SQLException {
     return new JdbcOperation<List<OBJECT>>() {
       @Override
@@ -138,28 +170,63 @@ public class Drowsy implements LifeCycle {
     }.run(readOnlyDataSource);
   }
 
-  public <OUTPUT> OUTPUT write(Query query, JdbcFunction<ResultSet,OUTPUT> reader) throws SQLException {
+  /**
+   * Atomically executes a write operation represented by given query. The
+   * ResultSet will be fed to given lambda.
+   * 
+   * @param query
+   *          the write operation, usually an insert, update or delete
+   * @param reader
+   *          the lambda function ResultSet -> transaction output
+   * @return the transaction's output
+   * @throws SQLException
+   *           if an error occurs
+   */
+  public <OUTPUT> OUTPUT write(Query query, JdbcFunction<ResultSet, OUTPUT> reader) throws SQLException {
     return new JdbcOperation<OUTPUT>() {
       @Override
       protected OUTPUT execute(Connection connection) throws SQLException {
         PreparedStatement statement = query.createPreparedStatement(connection);
-        statement.execute();
-        return reader.apply(statement.getResultSet());
+        ResultSet got = null;
+        if (query.returnGeneratedKeys()) {
+          statement.executeUpdate();
+          got = statement.getGeneratedKeys();
+        } else {
+          statement.execute();
+          got = statement.getResultSet();
+        }
+        return reader.apply(got);
       }
     }.run(operationDataSource);
   }
 
+  /**
+   * Atomically executes a write operation represented by given query. Maps the
+   * result set to a list containing objects of given class
+   * 
+   * @param query
+   *          the write operation, usually an insert, update or delete
+   * @param beanClass
+   *          a bean class whose fields directly match the query's columns
+   * @return a list of instantiated objects
+   * @throws SQLException
+   *           if an error occurs
+   */
   public <OBJECT> List<OBJECT> write(Query query, Class<OBJECT> beanClass) throws SQLException {
-    return new JdbcOperation<List<OBJECT>>() {
-      @Override
-      protected List<OBJECT> execute(Connection connection) throws SQLException {
-        PreparedStatement statement = query.createPreparedStatement(connection);
-        statement.executeUpdate();
-        return mapper.map(statement.getGeneratedKeys(), beanClass);
-      }
-    }.run(operationDataSource);
+    return write(query, rs -> {
+      return mapper.map(rs, beanClass);
+    });
   }
 
+  /**
+   * Atomically executes a write operation represented by given query
+   * 
+   * @param query
+   *          the write operation, usually an insert, update or delete
+   * @return the number of affected rows
+   * @throws SQLException
+   *           if an error occurs
+   */
   public int write(Query query) throws SQLException {
     return new JdbcOperation<Integer>() {
       @Override
@@ -170,6 +237,18 @@ public class Drowsy implements LifeCycle {
     }.run(operationDataSource);
   }
 
+  /**
+   * Runs an arbitrary set of instructions over a JDBC connection with
+   * auto-commit disabled. The transaction will be commited afterwards or
+   * rollbacked on error. The connection and any JDBC resources created by the
+   * transaction code will be closed automatically.
+   * 
+   * @param transaction
+   *          the JDBC transaction's code
+   * @return the transaction output object
+   * @throws SQLException
+   *           if an error occurs
+   */
   public <OBJECT> OBJECT executeTransaction(JdbcFunction<Connection, OBJECT> transaction) throws SQLException {
     return new JdbcTransaction<OBJECT>() {
       @Override

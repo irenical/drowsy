@@ -2,6 +2,8 @@ package org.irenical.drowsy.query.builder.sql;
 
 import java.util.Arrays;
 
+import org.irenical.drowsy.query.BaseQuery;
+import org.irenical.drowsy.query.Query;
 import org.irenical.drowsy.query.Query.TYPE;
 
 public class InsertBuilder extends BaseQueryBuilder<InsertBuilder> {
@@ -9,7 +11,14 @@ public class InsertBuilder extends BaseQueryBuilder<InsertBuilder> {
   protected InsertBuilder() {
     super(TYPE.INSERT);
   }
-
+  
+  @Override
+  public Query build() {
+    BaseQuery bq = (BaseQuery) super.build();
+    bq.setReturnGeneratedKeys(true);
+    return bq;
+  }
+  
   public static InsertBuilder create(String sql) {
     InsertBuilder result = new InsertBuilder();
     result.literal(sql);

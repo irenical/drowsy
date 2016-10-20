@@ -17,6 +17,8 @@ import java.util.List;
 public class BaseQuery implements Query {
 
   private TYPE type;
+  
+  private boolean returnGeneratedKeys;
 
   private List<Object> parameters;
 
@@ -43,13 +45,22 @@ public class BaseQuery implements Query {
   public void setType(TYPE type) {
     this.type = type;
   }
+  
+  @Override
+  public boolean returnGeneratedKeys() {
+    return returnGeneratedKeys;
+  }
+  
+  public void setReturnGeneratedKeys(boolean returnGeneratedKeys) {
+    this.returnGeneratedKeys = returnGeneratedKeys;
+  }
 
   @Override
   public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
     PreparedStatement ps;
     if (TYPE.CALL.equals(type)) {
       ps = connection.prepareCall(query);
-    } else if (TYPE.INSERT.equals(type)) {
+    } else if (returnGeneratedKeys) {
       ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
     } else {
       ps = connection.prepareStatement(query);

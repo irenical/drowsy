@@ -10,6 +10,8 @@ public interface Query {
   enum TYPE {
     SELECT, INSERT, UPDATE, DELETE, CALL
   };
+  
+  boolean returnGeneratedKeys();
 
   List<Object> getParameters();
 

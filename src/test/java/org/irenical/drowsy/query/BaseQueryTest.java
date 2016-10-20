@@ -93,6 +93,7 @@ public class BaseQueryTest extends PGTestUtils {
   public void testInsert() throws SQLException {
     BaseQuery q = new BaseQuery();
     q.setType(TYPE.INSERT);
+    q.setReturnGeneratedKeys(true);
     q.setQuery("insert into people(name) values('obama')");
     PreparedStatement ps = q.createPreparedStatement(c);
     Assert.assertNotNull(ps);
