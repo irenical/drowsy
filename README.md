@@ -25,7 +25,7 @@ As of now, Drowsy is still a single project.
 <dependency>
   <groupId>org.irenical.drowsy</groupId>
   <artifactId>drowsy</artifactId>
-  <version>0.0.10</version>
+  <version>0.0.11</version>
 </dependency>
 ```
 In it you can find the following modules:
@@ -54,7 +54,7 @@ Simple ResultSet to bean mapping.
 The full bundle. Glues all the modules together in a simplified, easy to use API.  
 
 ## Usage
-Note: You can use the modules separately, these examples bellow apply when you're using the entire Drowsy bundle.  
+Note: You can use the modules separately, the examples bellow assume you are using the entire Drowsy bundle.  
 
 **Life cycle**
 ```java
@@ -64,9 +64,10 @@ drowsy.start();
 drowsy.stop();
 ```
 
-**One liner select**
+**Simple select**
 ```java
-List<LegitPerson> got = drowsy.read(SelectBuilder.create("select * from people").build(), LegitPerson.class);
+Query query = SelectBuilder.create("select * from people").build();
+List<LegitPerson> got = drowsy.read(query, LegitPerson.class);
 ```
 
 ## Configuration
