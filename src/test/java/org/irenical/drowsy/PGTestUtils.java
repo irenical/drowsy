@@ -3,9 +3,9 @@ package org.irenical.drowsy;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.flywaydb.core.Flyway;
 import org.irenical.jindy.Config;
 import org.irenical.jindy.ConfigFactory;
 import org.junit.AfterClass;
@@ -28,32 +28,6 @@ public class PGTestUtils {
     postgresConfig = PostgresConfig.defaultWithDbName("test");
     PostgresExecutable exec = runtime.prepare(postgresConfig);
     postgresProcess = exec.start();
-    Connection connection = createConnection(false);
-
-    // create table
-    PreparedStatement createPeopleTableStatement = connection
-        .prepareStatement("create table people (id serial primary key, name text, birth timestamptz)");
-    createPeopleTableStatement.executeUpdate();
-    createPeopleTableStatement.close();
-
-    // create procedure
-    PreparedStatement createProcedureStatement = connection.prepareStatement(
-        "CREATE OR REPLACE FUNCTION create_person(name text, birth timestamptz) " + "RETURNS void AS $$ " + "BEGIN "
-            + "  INSERT INTO people(name,birth) VALUES (name, birth); " + "END; " + "$$ LANGUAGE plpgsql;");
-    createProcedureStatement.executeUpdate();
-    createProcedureStatement.close();
-
-    // create data
-    PreparedStatement createPersonStatement = connection.prepareStatement("insert into people(name) values('Boda')");
-    createPersonStatement.executeUpdate();
-    createPersonStatement.close();
-    
-    createPersonStatement = connection.prepareStatement("insert into people(name) values('Buda')");
-    createPersonStatement.executeUpdate();
-    createPersonStatement.close();
-
-    connection.commit();
-    connection.close();
 
     String url = String.format("jdbc:postgresql://%s:%s/%s?", postgresConfig.net().host(), postgresConfig.net().port(),
         postgresConfig.storage().dbName());
@@ -62,6 +36,10 @@ public class PGTestUtils {
     config.setProperty("jdbc.jdbcUrl", url);
     config.setProperty("jdbc.username", user);
     config.setProperty("jdbc.password", null);
+    
+    Flyway flyway = new Flyway();
+    flyway.setDataSource(url, user, null);
+    flyway.migrate();
   }
 
   @AfterClass

@@ -61,16 +61,17 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
 
   private static String FLYWAY_BYPASS = "flyway.bypass";
   private static String FLYWAY_BASELINE_VERSION = "flyway.baselineVersion";
+  private static String FLYWAY_BASELINE_ON_MIGRATE = "flyway.baselineOnMigrate";
 
   private final Config config;
 
   private HikariDataSource dataSource;
 
   public DrowsyDataSource() {
-    this( ConfigFactory.getConfig().filterPrefix( "jdbc" ) );
+    this(ConfigFactory.getConfig().filterPrefix("jdbc"));
   }
 
-  public DrowsyDataSource( Config config ) {
+  public DrowsyDataSource(Config config) {
     this.config = config;
   }
 
@@ -90,7 +91,7 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
   @Override
   public boolean isRunning() {
     boolean isClosed = dataSource.isClosed();
-    if ( isClosed ) {
+    if (isClosed) {
       return false;
     }
 
@@ -102,11 +103,11 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
       LOGGER.error(e.getMessage(), e);
       return false;
     } finally {
-      if ( connection != null ) {
+      if (connection != null) {
         try {
           connection.close();
         } catch (SQLException e) {
-          LOGGER.error( e.getLocalizedMessage(), e );
+          LOGGER.error(e.getLocalizedMessage(), e);
         }
       }
     }
@@ -188,8 +189,8 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
     result.setTransactionIsolation(config.getString(TRANSACTIONISOLATION));
     result.setValidationTimeout(config.getInt(VALIDATIONTIMEOUT, 5000));
     result.setLeakDetectionThreshold(config.getInt(LEAKDETECTIONTHRESHOLD, 0));
-    result.setAutoCommit( isAutoCommit() );
-    result.setReadOnly( isReadOnly() );
+    result.setAutoCommit(isAutoCommit());
+    result.setReadOnly(isReadOnly());
     return result;
   }
 
@@ -199,13 +200,13 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
   }
 
   private void migrate() {
-    if ( isFlywayBypass() ) {
+    if (isFlywayBypass()) {
       return;
     }
     Flyway flyway = new Flyway();
     flyway.setDataSource(dataSource);
     String baseline = config.getString(FLYWAY_BASELINE_VERSION);
-    flyway.setBaselineOnMigrate(true);
+    flyway.setBaselineOnMigrate(config.getBoolean(FLYWAY_BASELINE_ON_MIGRATE,false));
     if (baseline != null) {
       flyway.setBaselineVersionAsString(baseline);
     }
@@ -215,22 +216,18 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
   private void setupConfigListeners() {
     // require reboot
     Arrays
-        .asList(DATASOURCECLASSNAME, JDBCURL, USERNAME, PASSWORD, AUTOCOMMIT, CONNECTIONTIMEOUT,
-            POOLNAME, CONNECTIONTESTQUERY, INITIALIZATIONFAILFAST, ISOLATEINTERNALQUERIES,
-            ALLOWPOOLSUSPENSION, READONLY, REGISTERMBEANS, CATALOG, CONNECTIONINITSQL,
-            DRIVERCLASSNAME, TRANSACTIONISOLATION, LEAKDETECTIONTHRESHOLD, FLYWAY_BYPASS,
-            FLYWAY_BASELINE_VERSION)
+        .asList(DATASOURCECLASSNAME, JDBCURL, USERNAME, PASSWORD, AUTOCOMMIT, CONNECTIONTIMEOUT, POOLNAME,
+            CONNECTIONTESTQUERY, INITIALIZATIONFAILFAST, ISOLATEINTERNALQUERIES, ALLOWPOOLSUSPENSION, READONLY,
+            REGISTERMBEANS, CATALOG, CONNECTIONINITSQL, DRIVERCLASSNAME, TRANSACTIONISOLATION, LEAKDETECTIONTHRESHOLD,
+            FLYWAY_BYPASS, FLYWAY_BASELINE_VERSION, FLYWAY_BASELINE_ON_MIGRATE)
         .stream().forEach(p -> config.listen(p, this::onConnectionPropertyChanged));
 
     // hot swappable
-    config.listen(MAXIMUMPOOLSIZE,
-        () -> dataSource.setMaximumPoolSize(config.getInt(MAXIMUMPOOLSIZE, 10)));
+    config.listen(MAXIMUMPOOLSIZE, () -> dataSource.setMaximumPoolSize(config.getInt(MAXIMUMPOOLSIZE, 10)));
     config.listen(MINIMUMIDLE, () -> dataSource.setMinimumIdle(config.getInt(MINIMUMIDLE, 1)));
     config.listen(IDLETIMEOUT, () -> dataSource.setIdleTimeout(config.getInt(IDLETIMEOUT, 600000)));
-    config.listen(MAXLIFETIME,
-        () -> dataSource.setMaxLifetime(config.getInt(MAXLIFETIME, 1800000)));
-    config.listen(VALIDATIONTIMEOUT,
-        () -> dataSource.setValidationTimeout(config.getInt(VALIDATIONTIMEOUT, 5000)));
+    config.listen(MAXLIFETIME, () -> dataSource.setMaxLifetime(config.getInt(MAXLIFETIME, 1800000)));
+    config.listen(VALIDATIONTIMEOUT, () -> dataSource.setValidationTimeout(config.getInt(VALIDATIONTIMEOUT, 5000)));
   }
 
   private void onConnectionPropertyChanged() {
@@ -252,11 +249,11 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
   }
 
   protected boolean isReadOnly() {
-    return config.getBoolean( READONLY, false );
+    return config.getBoolean(READONLY, false);
   }
 
   protected boolean isFlywayBypass() {
-    return config.getBoolean( FLYWAY_BYPASS, false );
+    return config.getBoolean(FLYWAY_BYPASS, false);
   }
 
 }
