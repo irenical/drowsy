@@ -220,7 +220,7 @@ public class Drowsy implements LifeCycle {
    * @throws SQLException
    *           if an error occurs
    */
-  public <OBJECT> List<OBJECT> write(Query query, Class<OBJECT> beanClass) throws SQLException {
+  public <OUTPUT> List<OUTPUT> write(Query query, Class<OUTPUT> beanClass) throws SQLException {
     return write(query, rs -> {
       return mapper.map(rs, beanClass);
     });
