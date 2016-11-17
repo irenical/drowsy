@@ -135,7 +135,7 @@ public class Drowsy implements LifeCycle {
    *          the read operation, usually a select
    * @param reader
    *          the lambda function ResultSet to transaction output
-   * @param OUTPUT
+   * @param <OUTPUT>
    *          the operation's output type
    * @return the transaction's output
    * @throws SQLException
@@ -158,16 +158,16 @@ public class Drowsy implements LifeCycle {
    *          the read operation, usually a select
    * @param beanClass
    *          a bean class whose fields directly match the query's columns
-   * @param OUTPUT
+   * @param <OUTPUT>
    *          the operation's output type
    * @return the transaction's output
    * @throws SQLException
    *           if an error occurs
    */
-  public <OBJECT> List<OBJECT> read(Query query, Class<OBJECT> beanClass) throws SQLException {
-    return new JdbcOperation<List<OBJECT>>() {
+  public <OUTPUT> List<OUTPUT> read(Query query, Class<OUTPUT> beanClass) throws SQLException {
+    return new JdbcOperation<List<OUTPUT>>() {
       @Override
-      protected List<OBJECT> execute(Connection connection) throws SQLException {
+      protected List<OUTPUT> execute(Connection connection) throws SQLException {
         PreparedStatement statement = query.createPreparedStatement(connection);
         return mapper.map(statement.executeQuery(), beanClass);
       }
@@ -182,7 +182,7 @@ public class Drowsy implements LifeCycle {
    *          the write operation, usually an insert, update or delete
    * @param reader
    *          the lambda function ResultSet to transaction output
-   * @param OUTPUT
+   * @param <OUTPUT>
    *          the operation's output type
    * @return the transaction's output
    * @throws SQLException
@@ -214,7 +214,7 @@ public class Drowsy implements LifeCycle {
    *          the write operation, usually an insert, update or delete
    * @param beanClass
    *          a bean class whose fields directly match the query's columns
-   * @param OUTPUT
+   * @param <OUTPUT>
    *          the operation's output type
    * @return a list of instantiated objects
    * @throws SQLException
@@ -253,7 +253,7 @@ public class Drowsy implements LifeCycle {
    * 
    * @param transaction
    *          the JDBC transaction's code
-   * @param OUTPUT
+   * @param <OUTPUT>
    *          the transaction's output type
    * @return the transaction output object
    * @throws SQLException
