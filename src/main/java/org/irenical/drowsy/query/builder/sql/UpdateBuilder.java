@@ -29,7 +29,7 @@ public class UpdateBuilder extends ExpressionBuilder<UpdateBuilder> {
    *          - the column name
    * @param value
    *          - the variable value
-   * @return
+   * @return the builder
    */
   public UpdateBuilder setParam(String column, Object value) {
     if (!firstSet) {

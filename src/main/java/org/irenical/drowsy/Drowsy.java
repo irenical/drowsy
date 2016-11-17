@@ -134,7 +134,9 @@ public class Drowsy implements LifeCycle {
    * @param query
    *          the read operation, usually a select
    * @param reader
-   *          the lambda function ResultSet -> transaction output
+   *          the lambda function ResultSet to transaction output
+   * @param OUTPUT
+   *          the operation's output type
    * @return the transaction's output
    * @throws SQLException
    *           if an error occurs
@@ -156,6 +158,8 @@ public class Drowsy implements LifeCycle {
    *          the read operation, usually a select
    * @param beanClass
    *          a bean class whose fields directly match the query's columns
+   * @param OUTPUT
+   *          the operation's output type
    * @return the transaction's output
    * @throws SQLException
    *           if an error occurs
@@ -177,7 +181,9 @@ public class Drowsy implements LifeCycle {
    * @param query
    *          the write operation, usually an insert, update or delete
    * @param reader
-   *          the lambda function ResultSet -> transaction output
+   *          the lambda function ResultSet to transaction output
+   * @param OUTPUT
+   *          the operation's output type
    * @return the transaction's output
    * @throws SQLException
    *           if an error occurs
@@ -208,6 +214,8 @@ public class Drowsy implements LifeCycle {
    *          the write operation, usually an insert, update or delete
    * @param beanClass
    *          a bean class whose fields directly match the query's columns
+   * @param OUTPUT
+   *          the operation's output type
    * @return a list of instantiated objects
    * @throws SQLException
    *           if an error occurs
@@ -245,14 +253,16 @@ public class Drowsy implements LifeCycle {
    * 
    * @param transaction
    *          the JDBC transaction's code
+   * @param OUTPUT
+   *          the transaction's output type
    * @return the transaction output object
    * @throws SQLException
    *           if an error occurs
    */
-  public <OBJECT> OBJECT executeTransaction(JdbcFunction<Connection, OBJECT> transaction) throws SQLException {
-    return new JdbcTransaction<OBJECT>() {
+  public <OUTPUT> OUTPUT executeTransaction(JdbcFunction<Connection, OUTPUT> transaction) throws SQLException {
+    return new JdbcTransaction<OUTPUT>() {
       @Override
-      protected OBJECT execute(Connection connection) throws SQLException {
+      protected OUTPUT execute(Connection connection) throws SQLException {
         return transaction.apply(connection);
       }
     }.run(transactionDataSource);

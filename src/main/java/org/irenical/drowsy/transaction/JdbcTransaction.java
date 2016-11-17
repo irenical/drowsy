@@ -21,7 +21,7 @@ public abstract class JdbcTransaction<OUTPUT> {
 
   /**
    * Creates a new re-usable, thread-safe transaction object
-   * Same as {@link JdbcTransaction(false)}
+   * Same as {@link #JdbcTransaction(boolean)} with false
    */
   public JdbcTransaction() {
     this(false);
