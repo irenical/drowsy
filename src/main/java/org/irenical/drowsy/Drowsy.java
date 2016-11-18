@@ -115,9 +115,15 @@ public class Drowsy implements LifeCycle {
    */
   @Override
   public void stop() {
-    operationDataSource.stop();
-    transactionDataSource.stop();
-    readOnlyDataSource.stop();
+    if(operationDataSource!=null){
+      operationDataSource.stop();
+    }
+    if(transactionDataSource!=null){
+      transactionDataSource.stop();
+    }
+    if(readOnlyDataSource!=null){
+      readOnlyDataSource.stop();
+    }
   }
 
   /**
