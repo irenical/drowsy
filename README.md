@@ -20,37 +20,31 @@ Drowsy, the bear
 - Non-JDBC data sources support  
 
 ## Drowsy Modules
-As of now, Drowsy is still a single project.
-```maven
-<dependency>
-  <groupId>org.irenical.drowsy</groupId>
-  <artifactId>drowsy</artifactId>
-  <version>0.0.11</version>
-</dependency>
-```
-In it you can find the following modules:
+Database access can quickly become a complex problem that in many cases cannot be solved with a one-size-fits-all solution. With this in mind, Drowsy is built upon 4 independent and strictly separated modules, each tackling a different concern. If you only want query building, there is no reason to include configuration, database migration, connection pooling or any other unnecessary dependencies in your project.  
+Additionally and for convenience there is a 5th module that groups the other four and exposes an unified API. 
+
 ### DataSource
-[org.irenical.drowsy.datasource]  
+[![][maven-datasource img]][maven-datasource]  
 A DataSource implementation with built-in dynamic configuration, allowing you to change any property at runtime. It's built upon [HikariCP](https://github.com/brettwooldridge/HikariCP), [Flyway](https://github.com/flyway/flyway) and [Jindy](https://github.com/irenical/jindy).  
 [DataSource's module wiki](https://github.com/irenical/drowsy/wiki/DataSource)
 
 ### Transaction
-[org.irenical.drowsy.transaction]  
+[![][maven-transaction img]][maven-transaction]  
 Models database operations at the connection and transaction level. Ensures resource deallocation, transaction commit and rollback on error.  
 [Transaction's module wiki](https://github.com/irenical/drowsy/wiki/Transaction)
 
 ### Query
-[org.irenical.drowsy.query]  
+[![][maven-query img]][maven-query]  
 Query builder classes that help you build prepared statements.  
 [Query's module wiki](https://github.com/irenical/drowsy/wiki/Query)
 
 ### Mapper
-[org.irenical.drowsy.mapper]  
+[![][maven-mapper img]][maven-mapper]  
 Simple ResultSet to bean mapping.  
 [Mapper's module wiki](https://github.com/irenical/drowsy/wiki/Mapper)
 
 ### Drowsy
-[org.irenical.drowsy]  
+[![][maven img]][maven]  
 The full bundle. Glues all the modules together in a simplified, easy to use API.  
 
 ## Usage
@@ -93,10 +87,22 @@ Drowsy uses [Jindy](https://github.com/irenical/jindy) for configuration, so a J
 </dependency>
 ```
 
-[bear]:https://www.irenical.org/drowsy/bear.jpg "Sometimes, hibernate is just too much - Drowsy, the bear"
+[bear]:https://www.irenical.org/drowsy/bear.jpg "Sometimes, hibernating is just too much - Drowsy, the bear"
 
 [maven]:http://search.maven.org/#search|gav|1|g:"org.irenical.drowsy"%20AND%20a:"drowsy"
 [maven img]:https://maven-badges.herokuapp.com/maven-central/org.irenical.drowsy/drowsy/badge.svg
+
+[maven-datasource]:http://search.maven.org/#search|gav|1|g:"org.irenical.drowsy"%20AND%20a:"drowsy-datasource"
+[maven-datasource img]:https://maven-badges.herokuapp.com/maven-central/org.irenical.drowsy/drowsy-datasource/badge.svg
+
+[maven-transaction]:http://search.maven.org/#search|gav|1|g:"org.irenical.drowsy"%20AND%20a:"drowsy-transaction"
+[maven-transaction img]:https://maven-badges.herokuapp.com/maven-central/org.irenical.drowsy/drowsy-transaction/badge.svg
+
+[maven-query]:http://search.maven.org/#search|gav|1|g:"org.irenical.drowsy"%20AND%20a:"drowsy-query"
+[maven-query img]:https://maven-badges.herokuapp.com/maven-central/org.irenical.drowsy/drowsy-query/badge.svg
+
+[maven-mapper]:http://search.maven.org/#search|gav|1|g:"org.irenical.drowsy"%20AND%20a:"drowsy-mapper"
+[maven-mapper img]:https://maven-badges.herokuapp.com/maven-central/org.irenical.drowsy/drowsy-mapper/badge.svg
 
 [travis]:https://travis-ci.org/irenical/drowsy
 [travis img]:https://travis-ci.org/irenical/drowsy.svg?branch=master
