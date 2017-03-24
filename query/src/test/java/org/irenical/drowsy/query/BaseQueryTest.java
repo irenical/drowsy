@@ -220,4 +220,11 @@ public class BaseQueryTest {
     q.setType(TYPE.SELECT);
     q.setQueryFromResource(null, "queries/somequery.txt");
   }
+
+  @Test(expected = IllegalStateException.class)
+  public void testQueryFromEmptyFile() throws SQLException {
+    BaseQuery q = new BaseQuery();
+    q.setType(TYPE.SELECT);
+    q.setQueryFromResource("queries/empty.txt");
+  }
 }
