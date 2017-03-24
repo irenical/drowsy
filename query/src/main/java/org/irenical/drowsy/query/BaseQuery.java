@@ -39,13 +39,20 @@ public class BaseQuery implements Query {
     this.query = query;
   }
 
-  public void setQueryFromResource(String resourceFilePath) {
-    InputStream is = this.getClass().getResourceAsStream(resourceFilePath);
+  public void setQueryFromResource(ClassLoader classLoader, String resourcePath) {
+    if (classLoader == null) {
+      throw new IllegalArgumentException("Classloader cannot be nul");
+    }
+    InputStream is = classLoader.getResourceAsStream(resourcePath);
     if (is == null) {
-      throw new IllegalArgumentException(String.format("Resource could not be found in the provided path: %s", resourceFilePath));
+      throw new IllegalArgumentException(String.format("Resource could not be found in the provided path: %s", resourcePath));
     }
     String sql = new Scanner(is, "UTF-8").useDelimiter("\\A").next();
     this.setQuery(sql.trim());
+  }
+
+  public void setQueryFromResource(String resourceFilePath) {
+    this.setQueryFromResource(this.getClass().getClassLoader(), resourceFilePath);
   }
 
   @Override

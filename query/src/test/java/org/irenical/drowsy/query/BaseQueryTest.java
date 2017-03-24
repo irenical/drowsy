@@ -2,6 +2,21 @@ package org.irenical.drowsy.query;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.flywaydb.core.Flyway;
+import org.irenical.drowsy.query.Query.TYPE;
+import org.irenical.jindy.Config;
+import org.irenical.jindy.ConfigFactory;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import ru.yandex.qatools.embed.postgresql.PostgresExecutable;
+import ru.yandex.qatools.embed.postgresql.PostgresProcess;
+import ru.yandex.qatools.embed.postgresql.PostgresStarter;
+import ru.yandex.qatools.embed.postgresql.config.PostgresConfig;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,38 +28,12 @@ import java.util.Arrays;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import org.flywaydb.core.Flyway;
-import org.irenical.drowsy.query.Query.TYPE;
-import org.irenical.jindy.Config;
-import org.irenical.jindy.ConfigFactory;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.TimeZone;
-import java.util.UUID;
-
-import ru.yandex.qatools.embed.postgresql.PostgresExecutable;
-import ru.yandex.qatools.embed.postgresql.PostgresProcess;
-import ru.yandex.qatools.embed.postgresql.PostgresStarter;
-import ru.yandex.qatools.embed.postgresql.config.PostgresConfig;
-
 public class BaseQueryTest {
 
   protected static HikariDataSource ds;
 
   protected Connection c;
-  
+
   protected static PostgresProcess postgresProcess;
   protected static PostgresConfig postgresConfig;
 
@@ -57,17 +46,17 @@ public class BaseQueryTest {
     postgresProcess = exec.start();
 
     String url = String.format("jdbc:postgresql://%s:%s/%s?", postgresConfig.net().host(), postgresConfig.net().port(),
-        postgresConfig.storage().dbName());
+      postgresConfig.storage().dbName());
     Config config = ConfigFactory.getConfig();
     String user = System.getProperty("user.name");
     config.setProperty("jdbc.jdbcUrl", url);
     config.setProperty("jdbc.username", user);
     config.setProperty("jdbc.password", null);
-    
+
     Flyway flyway = new Flyway();
     flyway.setDataSource(url, user, null);
     flyway.migrate();
-    
+
     HikariConfig hc = new HikariConfig();
     hc.setJdbcUrl(config.getString("jdbc.jdbcUrl"));
     hc.setUsername(config.getString("jdbc.username"));
@@ -77,7 +66,7 @@ public class BaseQueryTest {
 
   @AfterClass
   public static void shutdown() {
-	  ds.close();
+    ds.close();
     postgresProcess.stop();
   }
 
@@ -206,7 +195,15 @@ public class BaseQueryTest {
   public void testQueryFromResource() throws SQLException {
     BaseQuery q = new BaseQuery();
     q.setType(TYPE.SELECT);
-    q.setQueryFromResource("/queries/somequery.txt");
+    q.setQueryFromResource("queries/somequery.txt");
+    Assert.assertEquals("select * from omega where", q.getQuery());
+  }
+
+  @Test
+  public void testQueryFromResourceWithClassloader() throws SQLException {
+    BaseQuery q = new BaseQuery();
+    q.setType(TYPE.SELECT);
+    q.setQueryFromResource(this.getClass().getClassLoader(), "queries/somequery.txt");
     Assert.assertEquals("select * from omega where", q.getQuery());
   }
 
@@ -214,7 +211,13 @@ public class BaseQueryTest {
   public void testQueryFromUnexistingResource() throws SQLException {
     BaseQuery q = new BaseQuery();
     q.setType(TYPE.SELECT);
-    q.setQueryFromResource("/queries/i_dont_exist.txt");
+    q.setQueryFromResource("queries/i_dont_exist.txt");
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testQueryFromResourceWithNullClassloader() throws SQLException {
+    BaseQuery q = new BaseQuery();
+    q.setType(TYPE.SELECT);
+    q.setQueryFromResource(null, "queries/somequery.txt");
+  }
 }
