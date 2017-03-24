@@ -18,7 +18,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<drowsy.version>0.0.14</drowsy.version>
+		<drowsy.version>0.1.1</drowsy.version>
 	</properties>
 
 	<scm>

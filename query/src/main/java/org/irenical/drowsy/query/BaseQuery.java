@@ -57,8 +57,8 @@ public class BaseQuery implements Query {
     }
   }
 
-  public void setQueryFromResource(String resourceFilePath) {
-    this.setQueryFromResource(this.getClass().getClassLoader(), resourceFilePath);
+  public void setQueryFromResource(String resourcePath) {
+    this.setQueryFromResource(this.getClass().getClassLoader(), resourcePath);
   }
 
   @Override
