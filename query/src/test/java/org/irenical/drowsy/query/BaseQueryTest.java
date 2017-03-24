@@ -2,7 +2,6 @@ package org.irenical.drowsy.query;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.irenical.drowsy.PGTestUtils;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
