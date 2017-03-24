@@ -1,5 +1,7 @@
 package org.irenical.drowsy.query;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,8 +24,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.TimeZone;
+import java.util.UUID;
 
 import ru.yandex.qatools.embed.postgresql.PostgresExecutable;
 import ru.yandex.qatools.embed.postgresql.PostgresProcess;
@@ -137,7 +146,7 @@ public class BaseQueryTest {
     TimeZone was = TimeZone.getDefault();
     TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
     String name = UUID.randomUUID().toString();
-    
+
     BaseQuery q = new BaseQuery();
     q.setType(TYPE.INSERT);
     q.setQuery("insert into people(name,birth) values(?,?)");
@@ -161,13 +170,13 @@ public class BaseQueryTest {
     ps.close();
     TimeZone.setDefault(was);
   }
-  
+
   @Test
   public void testZonedDateTime() throws SQLException {
     TimeZone was = TimeZone.getDefault();
     TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
     String name = UUID.randomUUID().toString();
-    
+
     BaseQuery q = new BaseQuery();
     q.setType(TYPE.INSERT);
     q.setQuery("insert into people(name,birth) values(?,?)");
@@ -176,7 +185,7 @@ public class BaseQueryTest {
     PreparedStatement ps = q.createPreparedStatement(c);
     ps.executeUpdate();
     ps.close();
-    
+
     TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     q = new BaseQuery();
     q.setType(TYPE.SELECT);
@@ -189,8 +198,23 @@ public class BaseQueryTest {
     Assert.assertEquals(birth.toInstant().toEpochMilli(), readTimestamp.getTime());
     set.close();
     ps.close();
-    
+
     TimeZone.setDefault(was);
+  }
+
+  @Test
+  public void testQueryFromResource() throws SQLException {
+    BaseQuery q = new BaseQuery();
+    q.setType(TYPE.SELECT);
+    q.setQueryFromResource("/queries/somequery.txt");
+    Assert.assertEquals("select * from omega where", q.getQuery());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testQueryFromUnexistingResource() throws SQLException {
+    BaseQuery q = new BaseQuery();
+    q.setType(TYPE.SELECT);
+    q.setQueryFromResource("/queries/i_dont_exist.txt");
   }
 
 }

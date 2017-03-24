@@ -1,5 +1,6 @@
 package org.irenical.drowsy.query;
 
+import java.io.InputStream;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
@@ -13,11 +14,12 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Scanner;
 
 public class BaseQuery implements Query {
 
   private TYPE type;
-  
+
   private boolean returnGeneratedKeys;
 
   private List<Object> parameters;
@@ -37,6 +39,15 @@ public class BaseQuery implements Query {
     this.query = query;
   }
 
+  public void setQueryFromResource(String resourceFilePath) {
+    InputStream is = this.getClass().getResourceAsStream(resourceFilePath);
+    if (is == null) {
+      throw new IllegalArgumentException(String.format("Resource could not be found in the provided path: %s", resourceFilePath));
+    }
+    String sql = new Scanner(is, "UTF-8").useDelimiter("\\A").next();
+    this.setQuery(sql.trim());
+  }
+
   @Override
   public String getQuery() {
     return query;
@@ -45,12 +56,12 @@ public class BaseQuery implements Query {
   public void setType(TYPE type) {
     this.type = type;
   }
-  
+
   @Override
   public boolean returnGeneratedKeys() {
     return returnGeneratedKeys;
   }
-  
+
   public void setReturnGeneratedKeys(boolean returnGeneratedKeys) {
     this.returnGeneratedKeys = returnGeneratedKeys;
   }
