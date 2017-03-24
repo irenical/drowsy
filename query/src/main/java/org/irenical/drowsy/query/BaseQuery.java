@@ -47,8 +47,14 @@ public class BaseQuery implements Query {
     if (is == null) {
       throw new IllegalArgumentException(String.format("Resource could not be found in the provided path: %s", resourcePath));
     }
-    String sql = new Scanner(is, "UTF-8").useDelimiter("\\A").next();
-    this.setQuery(sql.trim());
+    try (
+      Scanner scanner = new Scanner(is, "UTF-8").useDelimiter("\\A");
+    ) {
+      if (!scanner.hasNext()) {
+        throw new IllegalStateException(String.format("File at %s is empty", resourcePath));
+      }
+      this.setQuery(scanner.next().trim());
+    }
   }
 
   public void setQueryFromResource(String resourceFilePath) {
