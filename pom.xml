@@ -10,7 +10,7 @@
 
 	<groupId>org.irenical.drowsy</groupId>
 	<artifactId>drowsy-parent</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 
 	<name>Drowsy - Parent Project</name>
 	<description>Another non-orm JDBC library</description>
