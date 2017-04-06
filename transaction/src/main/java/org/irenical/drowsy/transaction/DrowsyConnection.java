@@ -53,8 +53,9 @@ public class DrowsyConnection implements InvocationHandler {
         statements.clear();
       }
 
-      final Object ret = method.invoke(connection, args);
+      Object ret = method.invoke(connection, args);
       if (ret instanceof Statement) {
+        ret = DrowsyStatement.wrap((Statement) ret);
         statements.add((Statement) ret);
       }
 
