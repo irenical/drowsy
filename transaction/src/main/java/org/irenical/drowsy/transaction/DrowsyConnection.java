@@ -1,5 +1,8 @@
 package org.irenical.drowsy.transaction;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,9 +12,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.LinkedList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DrowsyConnection implements InvocationHandler {
 
@@ -28,12 +28,12 @@ public class DrowsyConnection implements InvocationHandler {
 
   public static Connection wrap(Connection connection) {
     if (Proxy.isProxyClass(connection.getClass())
-        && Proxy.getInvocationHandler(connection) instanceof DrowsyConnection) {
+      && Proxy.getInvocationHandler(connection) instanceof DrowsyConnection) {
       return connection;
     }
     DrowsyConnection proxy = new DrowsyConnection(connection);
     return (Connection) Proxy.newProxyInstance(DrowsyConnection.class.getClassLoader(),
-        new Class[] { Connection.class }, proxy);
+      new Class[]{Connection.class}, proxy);
   }
 
   @Override
@@ -42,9 +42,12 @@ public class DrowsyConnection implements InvocationHandler {
       if ("close".equals(method.getName())) {
         for (Statement stmt : statements) {
           try {
-            stmt.close();
+            if (!stmt.isClosed()) {
+              LOG.warn("Statement{} was left open. Closing from DrowsyConnection proxy", stmt);
+              stmt.close();
+            }
           } catch (Exception e) {
-            LOG.warn("Ignoring error closing statement " + stmt + ". Cause: " + e.getMessage());
+            LOG.error("Ignoring error closing statement {}", stmt, e);
           }
         }
         statements.clear();
