@@ -10,16 +10,12 @@
 
 	<groupId>org.irenical.drowsy</groupId>
 	<artifactId>drowsy-parent</artifactId>
-	<version>1.0.0</version>
+	<version>0.1.3-SNAPSHOT</version>
 
 	<name>Drowsy - Parent Project</name>
 	<description>Another non-orm JDBC library</description>
 
 	<packaging>pom</packaging>
-
-	<properties>
-		<drowsy.version>0.1.2</drowsy.version>
-	</properties>
 
 	<scm>
 		<connection>scm:git:git@github.com:irenical/drowsy.git</connection>
@@ -108,43 +104,28 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>HikariCP</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>ru.yandex.qatools.embed</groupId>
-			<artifactId>postgresql-embedded</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.irenical.jindy</groupId>
-			<artifactId>jindy-apacheconfig-impl</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+<!-- 	<dependencies> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>junit</groupId> -->
+<!-- 			<artifactId>junit</artifactId> -->
+<!-- 			<scope>test</scope> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.zaxxer</groupId> -->
+<!-- 			<artifactId>HikariCP</artifactId> -->
+<!-- 			<scope>test</scope> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.postgresql</groupId> -->
+<!-- 			<artifactId>postgresql</artifactId> -->
+<!-- 			<scope>test</scope> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>ch.qos.logback</groupId> -->
+<!-- 			<artifactId>logback-classic</artifactId> -->
+<!-- 			<scope>test</scope> -->
+<!-- 		</dependency> -->
+<!-- 	</dependencies> -->
 
 	<modules>
 		<module>datasource</module>
