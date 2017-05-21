@@ -9,7 +9,7 @@
 
 	<groupId>org.irenical.drowsy</groupId>
 	<artifactId>drowsy-parent</artifactId>
-	<version>0.1.7</version>
+	<version>0.1.8-SNAPSHOT</version>
 
 	<name>Drowsy - Parent Project</name>
 	<description>Another non-orm JDBC library</description>
@@ -50,15 +50,6 @@
 					</execution>
 				</executions>
 			</plugin>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-release-plugin</artifactId> -->
-<!-- 				<version>2.5.3</version> -->
-<!-- 				<configuration> -->
-<!--				<updateOnlySnapshots>false</updateOnlySnapshots> -->
-<!-- 					<autoVersionSubmodules>true</autoVersionSubmodules> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
 		</plugins>
 	</build>
 
