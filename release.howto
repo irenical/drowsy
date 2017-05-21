@@ -1,2 +1,2 @@
 mvn release:update-versions -DautoVersionSubmodules=true
-mvn clean deploy -P relase
+mvn clean deploy -P release
