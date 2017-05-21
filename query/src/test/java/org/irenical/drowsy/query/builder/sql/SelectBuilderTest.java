@@ -191,7 +191,7 @@ public class SelectBuilderTest extends BaseBuilder {
   
   @Test
   public void testMixedColumnNames() {
-	  SelectBuilder qb = SelectBuilder.select("col1").identifier("col2").as("coolcol").column("col3()").identifier("col4").from("some_table").where("some_field").eq("some_value");
+	  SelectBuilder qb = SelectBuilder.select("col1").identifier("col2").as("coolcol").expression("col3()").identifier("col4").from("some_table").where("some_field").eq("some_value");
 	  assertBuilder(qb, "select col1, \"col2\" as coolcol, col3(), \"col4\" from some_table where some_field=?", Arrays.asList("some_value"));
   }
   

@@ -21,7 +21,7 @@ public class BaseSelectBuilder<BUILDER_CLASS extends ExpressionBuilder<BUILDER_C
 		return literals(Arrays.asList(identifiers), prefix, "\"", "\", \"");
 	}
 
-	public BUILDER_CLASS column(Object... columns) {
+	public BUILDER_CLASS expression(Object... columns) {
 		String prefix = firstColumn ? null : ", ";
 		if (columns.length > 0) {
 			firstColumn = false;

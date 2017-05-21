@@ -12,7 +12,7 @@ public class SelectBuilder extends BaseSelectBuilder<SelectBuilder> {
 	}
 
 	public static SelectBuilder select(Object... columns) {
-		return create("select ").column(columns);
+		return create("select ").expression(columns);
 	}
 
 }
