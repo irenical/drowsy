@@ -9,7 +9,7 @@
 
 	<groupId>org.irenical.drowsy</groupId>
 	<artifactId>drowsy-parent</artifactId>
-	<version>0.1.5</version>
+	<version>0.1.6</version>
 
 	<name>Drowsy - Parent Project</name>
 	<description>Another non-orm JDBC library</description>
