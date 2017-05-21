@@ -176,4 +176,23 @@ public class SelectBuilderTest extends BaseBuilder {
     SelectBuilder qb = SelectBuilder.select("*").from("some_table").where("some_field").not().in(Arrays.asList("some_value","some_other_value"));
     assertBuilder(qb, "select * from some_table where some_field not in(?, ?)", Arrays.asList("some_value","some_other_value"));
   }
+  
+  @Test
+  public void testAlias() {
+	  SelectBuilder qb = SelectBuilder.select("col1").as("coolcol").from("some_table").where("some_field").eq("some_value");
+	  assertBuilder(qb, "select col1 as coolcol from some_table where some_field=?", Arrays.asList("some_value"));
+  }
+  
+  @Test
+  public void testIdentifierColumnNames() {
+	  SelectBuilder qb = SelectBuilder.select().identifier("col1","col2").from("some_table").where("some_field").eq("some_value");
+	  assertBuilder(qb, "select \"col1\", \"col2\" from some_table where some_field=?", Arrays.asList("some_value"));
+  }
+  
+  @Test
+  public void testMixedColumnNames() {
+	  SelectBuilder qb = SelectBuilder.select("col1").identifier("col2").as("coolcol").column("col3()").identifier("col4").from("some_table").where("some_field").eq("some_value");
+	  assertBuilder(qb, "select col1, \"col2\" as coolcol, col3(), \"col4\" from some_table where some_field=?", Arrays.asList("some_value"));
+  }
+  
 }
