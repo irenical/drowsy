@@ -1,6 +1,7 @@
 package org.irenical.drowsy.query.builder.sql;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.irenical.drowsy.query.builder.QueryBuilder;
 import org.junit.Test;
@@ -18,6 +19,14 @@ public class InsertBuilderTest extends BaseBuilder {
     String query = "insert into some_table(some_column) values(?)";
     QueryBuilder<?> qb = InsertBuilder.into("some_table").columns("some_column").values("some_value");
     assertBuilder(qb, query, Arrays.asList("some_value"));
+  }
+  
+  @Test
+  public void testInsertIntoMultirows() {
+    String query = "insert into some_table(some_column) values (?, ?), (?, ?)";
+    List<String> rows = Arrays.asList("row1","thesecondrow");
+    QueryBuilder<?> qb = InsertBuilder.into("some_table").columns("some_column").values(rows,bean->Arrays.asList(bean,bean.length()));
+    assertBuilder(qb, query, Arrays.asList("row1",4,"thesecondrow",12));
   }
   
   @Test
