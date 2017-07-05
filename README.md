@@ -67,7 +67,7 @@ List<LegitPerson> got = drowsy.read(query, LegitPerson.class);
 ## Configuration
 DataSource configuration is as in [HikariCP](https://github.com/brettwooldridge/HikariCP), prefixed with jdbc. Plus two Flyway specific configurations.
 ```properties
-jdbc.url=jdbc:postgresql://localhost:5432/MyDB
+jdbc.jdbcUrl=jdbc:postgresql://localhost:5432/MyDB
 jdbc.username=me
 jdbc.password=hunter2
 ...
