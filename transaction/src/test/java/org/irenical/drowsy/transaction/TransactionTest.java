@@ -104,22 +104,24 @@ public class TransactionTest {
 
 	@Test
 	public void testEmptyOperation() throws SQLException, IOException {
-		new JdbcOperation<String>() {
+		String got = new JdbcOperation<String>() {
 			@Override
 			protected String execute(Connection connection) throws SQLException {
-				return null;
+				return "executed";
 			}
 		}.run(createConnection(true));
+		Assert.assertEquals("executed", got);
 	}
 
 	@Test
 	public void testEmptyTransaction() throws SQLException, IOException {
-		new JdbcTransaction<String>() {
+		String got = new JdbcTransaction<String>() {
 			@Override
 			protected String execute(Connection connection) throws SQLException {
-				return null;
+				return "executed";
 			}
 		}.run(createConnection(false));
+		Assert.assertEquals("executed", got);
 	}
 
 	@Test
