@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.irenical.drowsy</groupId>
     <artifactId>drowsy-parent</artifactId>
-    <version>0.1.8</version>
+    <version>0.1.9-SNAPSHOT</version>
   </parent>
 
   <artifactId>drowsy-datasource</artifactId>
