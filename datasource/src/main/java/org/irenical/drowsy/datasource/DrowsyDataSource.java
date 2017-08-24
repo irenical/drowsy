@@ -47,7 +47,7 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
   private static String MINIMUMIDLE = "minimumIdle";
   private static String MAXIMUMPOOLSIZE = "maximumPoolSize";
   private static String POOLNAME = "poolName";
-  private static String INITIALIZATIONFAILFAST = "initializationFailFast";
+  private static String INITIALIZATIONFAILTIMEOUT = "initializationFailTimeout";
   private static String ISOLATEINTERNALQUERIES = "isolateInternalQueries";
   private static String ALLOWPOOLSUSPENSION = "allowPoolSuspension";
   private static String READONLY = "readOnly";
@@ -176,7 +176,7 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
     result.setMinimumIdle(config.getInt(MINIMUMIDLE, 1));
     result.setMaximumPoolSize(config.getInt(MAXIMUMPOOLSIZE, 10));
     result.setPoolName(config.getString(POOLNAME));
-    result.setInitializationFailFast(config.getBoolean(INITIALIZATIONFAILFAST, true));
+    result.setInitializationFailTimeout(config.getLong(INITIALIZATIONFAILTIMEOUT, 1));
     result.setIsolateInternalQueries(config.getBoolean(ISOLATEINTERNALQUERIES, false));
     result.setAllowPoolSuspension(config.getBoolean(ALLOWPOOLSUSPENSION, false));
     result.setRegisterMbeans(config.getBoolean(REGISTERMBEANS, false));
@@ -206,7 +206,7 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
     Flyway flyway = new Flyway();
     flyway.setDataSource(dataSource);
     String baseline = config.getString(FLYWAY_BASELINE_VERSION);
-    flyway.setBaselineOnMigrate(config.getBoolean(FLYWAY_BASELINE_ON_MIGRATE,false));
+    flyway.setBaselineOnMigrate(config.getBoolean(FLYWAY_BASELINE_ON_MIGRATE, false));
     if (baseline != null) {
       flyway.setBaselineVersionAsString(baseline);
     }
@@ -217,20 +217,20 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
     // require reboot
     Arrays
         .asList(DATASOURCECLASSNAME, JDBCURL, USERNAME, PASSWORD, AUTOCOMMIT, CONNECTIONTIMEOUT, POOLNAME,
-            CONNECTIONTESTQUERY, INITIALIZATIONFAILFAST, ISOLATEINTERNALQUERIES, ALLOWPOOLSUSPENSION, READONLY,
+            CONNECTIONTESTQUERY, INITIALIZATIONFAILTIMEOUT, ISOLATEINTERNALQUERIES, ALLOWPOOLSUSPENSION, READONLY,
             REGISTERMBEANS, CATALOG, CONNECTIONINITSQL, DRIVERCLASSNAME, TRANSACTIONISOLATION, LEAKDETECTIONTHRESHOLD,
             FLYWAY_BYPASS, FLYWAY_BASELINE_VERSION, FLYWAY_BASELINE_ON_MIGRATE)
         .stream().forEach(p -> config.listen(p, this::onConnectionPropertyChanged));
 
     // hot swappable
-    config.listen(MAXIMUMPOOLSIZE, () -> dataSource.setMaximumPoolSize(config.getInt(MAXIMUMPOOLSIZE, 10)));
-    config.listen(MINIMUMIDLE, () -> dataSource.setMinimumIdle(config.getInt(MINIMUMIDLE, 1)));
-    config.listen(IDLETIMEOUT, () -> dataSource.setIdleTimeout(config.getInt(IDLETIMEOUT, 600000)));
-    config.listen(MAXLIFETIME, () -> dataSource.setMaxLifetime(config.getInt(MAXLIFETIME, 1800000)));
-    config.listen(VALIDATIONTIMEOUT, () -> dataSource.setValidationTimeout(config.getInt(VALIDATIONTIMEOUT, 5000)));
+    config.listen(MAXIMUMPOOLSIZE, p -> dataSource.setMaximumPoolSize(config.getInt(MAXIMUMPOOLSIZE, 10)));
+    config.listen(MINIMUMIDLE, p -> dataSource.setMinimumIdle(config.getInt(MINIMUMIDLE, 1)));
+    config.listen(IDLETIMEOUT, p -> dataSource.setIdleTimeout(config.getInt(IDLETIMEOUT, 600000)));
+    config.listen(MAXLIFETIME, p -> dataSource.setMaxLifetime(config.getInt(MAXLIFETIME, 1800000)));
+    config.listen(VALIDATIONTIMEOUT, p -> dataSource.setValidationTimeout(config.getInt(VALIDATIONTIMEOUT, 5000)));
   }
 
-  private void onConnectionPropertyChanged() {
+  private void onConnectionPropertyChanged(String prop) {
     LOGGER.info("DataSource Configuration changed. Creating new datasource...");
     try {
       HikariDataSource oldDataSource = dataSource;

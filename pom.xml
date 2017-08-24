@@ -1,115 +1,92 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.irenical.maven</groupId>
-		<artifactId>parent-root</artifactId>
-		<version>1.8.2</version>
-	</parent>
+  <parent>
+    <groupId>org.irenical.maven</groupId>
+    <artifactId>parent-root</artifactId>
+    <version>1.8.5</version>
+  </parent>
 
-	<groupId>org.irenical.drowsy</groupId>
-	<artifactId>drowsy-parent</artifactId>
-	<version>0.1.8-SNAPSHOT</version>
+  <groupId>org.irenical.drowsy</groupId>
+  <artifactId>drowsy-parent</artifactId>
+  <version>0.1.8-SNAPSHOT</version>
 
-	<name>Drowsy - Parent Project</name>
-	<description>Another non-orm JDBC library</description>
+  <name>Drowsy - Parent Project</name>
+  <description>Another non-orm JDBC library</description>
 
-	<packaging>pom</packaging>
+  <packaging>pom</packaging>
 
-	<scm>
-		<connection>scm:git:git@github.com:irenical/drowsy.git</connection>
-		<developerConnection>scm:git:git@github.com:irenical/drowsy.git</developerConnection>
-		<url>git@github.com:irenical/drowsy.git</url>
-	</scm>
+  <scm>
+    <connection>scm:git:git@github.com:irenical/drowsy.git</connection>
+    <developerConnection>scm:git:git@github.com:irenical/drowsy.git</developerConnection>
+    <url>git@github.com:irenical/drowsy.git</url>
+  </scm>
 
-	<developers>
-		<developer>
-			<name>Tiago Simão</name>
-			<email>tiagosimao@gmail.com</email>
-		</developer>
-	</developers>
+  <developers>
+    <developer>
+      <name>Tiago Simão</name>
+      <email>tiagosimao@gmail.com</email>
+    </developer>
+  </developers>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.9</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.irenical.lifecycle</groupId>
+        <artifactId>lifecycle</artifactId>
+        <version>1.0.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.irenical.jindy</groupId>
+        <artifactId>jindy-api</artifactId>
+        <version>3.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zaxxer</groupId>
+        <artifactId>HikariCP</artifactId>
+        <version>2.6.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-core</artifactId>
+        <version>4.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>ru.yandex.qatools.embed</groupId>
+        <artifactId>postgresql-embedded</artifactId>
+        <version>2.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>42.1.4</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>1.2.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.irenical.jindy</groupId>
+        <artifactId>jindy-apacheconfig-impl</artifactId>
+        <version>3.0.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.irenical.lifecycle</groupId>
-				<artifactId>lifecycle</artifactId>
-				<version>1.0.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.irenical.jindy</groupId>
-				<artifactId>jindy-api</artifactId>
-				<version>2.1.0</version>
-			</dependency>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.12</version>
-			</dependency>
-			<dependency>
-				<groupId>com.zaxxer</groupId>
-				<artifactId>HikariCP</artifactId>
-				<version>2.6.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.flywaydb</groupId>
-				<artifactId>flyway-core</artifactId>
-				<version>4.2.0</version>
-			</dependency>
-			<dependency>
-				<groupId>ru.yandex.qatools.embed</groupId>
-				<artifactId>postgresql-embedded</artifactId>
-				<version>2.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.postgresql</groupId>
-				<artifactId>postgresql</artifactId>
-				<version>42.1.1</version>
-			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>1.2.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.irenical.jindy</groupId>
-				<artifactId>jindy-apacheconfig-impl</artifactId>
-				<version>2.1.0</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-	<modules>
-		<module>datasource</module>
-		<module>transaction</module>
-		<module>query</module>
-		<module>query-mysql</module>
-		<module>mapper</module>
-		<module>drowsy</module>
-	</modules>
+  <modules>
+    <module>datasource</module>
+    <module>transaction</module>
+    <module>query</module>
+    <module>query-mysql</module>
+    <module>mapper</module>
+    <module>drowsy</module>
+  </modules>
 
 </project>
