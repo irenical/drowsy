@@ -43,7 +43,7 @@ public class DrowsyConnection implements InvocationHandler {
         for (Statement stmt : statements) {
           try {
             if (!stmt.isClosed()) {
-              LOG.warn("Statement{} was left open. Closing from DrowsyConnection proxy", stmt);
+              LOG.debug("Statement{} was left open. Closing from DrowsyConnection proxy", stmt);
               stmt.close();
             }
           } catch (Exception e) {
