@@ -83,7 +83,7 @@ Drowsy uses [Jindy](https://github.com/irenical/jindy) for configuration, so a J
 <dependency>
     <groupId>org.irenical.jindy</groupId>
     <artifactId>jindy-apacheconfig-impl</artifactId>
-    <version>2.1.0</version>
+    <version>3.0.2</version>
 </dependency>
 ```
 
