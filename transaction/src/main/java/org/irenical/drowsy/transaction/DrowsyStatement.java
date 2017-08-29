@@ -54,7 +54,7 @@ public final class DrowsyStatement implements InvocationHandler {
         for (ResultSet rst : resultSets) {
           try {
             if (!rst.isClosed()) {
-              LOG.warn("Result set {} was left open. Closing from DrowsyStatement proxy", rst);
+              LOG.debug("Result set {} was left open. Closing from DrowsyStatement proxy", rst);
               rst.close();
             }
           } catch (Exception e) {
