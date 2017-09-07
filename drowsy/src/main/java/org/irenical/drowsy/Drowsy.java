@@ -60,54 +60,32 @@ public class Drowsy implements LifeCycle {
     this.config = config;
   }
 
+  private void coldStart() {
+    if (this.transactionDataSource == null) {
+      DrowsySimpleDataSource transactionDataSource = new DrowsySimpleDataSource(config, false, null, null);
+      transactionDataSource.start();
+      this.transactionDataSource = transactionDataSource;
+    }
+
+    if (this.operationDataSource == null) {
+      DrowsySimpleDataSource operationDataSource = new DrowsySimpleDataSource(config, true, false, true);
+      operationDataSource.start();
+      this.operationDataSource = operationDataSource;
+    }
+
+    if (this.readOnlyDataSource == null) {
+      DrowsyDataSource readOnlyDataSource = new DrowsySimpleDataSource(config, true, true, true);
+      readOnlyDataSource.start();
+      this.readOnlyDataSource = readOnlyDataSource;
+    }
+  }
+
   /**
    * Launches this Drowsy instance, initializing the underlying datasources
    */
   @Override
   public void start() {
-    transactionDataSource = new DrowsyDataSource(config) {
-      @Override
-      protected boolean isAutoCommit() {
-        return false;
-      }
-    };
-    transactionDataSource.start();
-
-    operationDataSource = new DrowsyDataSource(config) {
-      @Override
-      protected boolean isAutoCommit() {
-        return true;
-      }
-
-      @Override
-      protected boolean isReadOnly() {
-        return false;
-      }
-
-      @Override
-      protected boolean isFlywayBypass() {
-        return true;
-      }
-    };
-    operationDataSource.start();
-
-    readOnlyDataSource = new DrowsyDataSource(config) {
-      @Override
-      protected boolean isAutoCommit() {
-        return true;
-      }
-
-      @Override
-      protected boolean isReadOnly() {
-        return true;
-      }
-
-      @Override
-      protected boolean isFlywayBypass() {
-        return true;
-      }
-    };
-    readOnlyDataSource.start();
+    coldStart();
   }
 
   /**
@@ -115,14 +93,17 @@ public class Drowsy implements LifeCycle {
    */
   @Override
   public void stop() {
-    if(operationDataSource!=null){
+    if (operationDataSource != null) {
       operationDataSource.stop();
+      operationDataSource = null;
     }
-    if(transactionDataSource!=null){
+    if (transactionDataSource != null) {
       transactionDataSource.stop();
+      transactionDataSource = null;
     }
-    if(readOnlyDataSource!=null){
+    if (readOnlyDataSource != null) {
       readOnlyDataSource.stop();
+      readOnlyDataSource = null;
     }
   }
 
@@ -131,7 +112,8 @@ public class Drowsy implements LifeCycle {
    */
   @Override
   public boolean isRunning() {
-    return transactionDataSource.isRunning() && operationDataSource.isRunning() && readOnlyDataSource.isRunning();
+    return transactionDataSource != null && operationDataSource != null && readOnlyDataSource != null
+        && transactionDataSource.isRunning() && operationDataSource.isRunning() && readOnlyDataSource.isRunning();
   }
 
   /**
@@ -148,6 +130,7 @@ public class Drowsy implements LifeCycle {
    *           if an error occurs
    */
   public <OUTPUT> OUTPUT read(Query query, JdbcFunction<ResultSet, OUTPUT> reader) throws SQLException {
+    coldStart();
     return new JdbcOperation<OUTPUT>() {
       @Override
       protected OUTPUT execute(Connection connection) throws SQLException {
@@ -171,6 +154,7 @@ public class Drowsy implements LifeCycle {
    *           if an error occurs
    */
   public <OUTPUT> List<OUTPUT> read(Query query, Class<OUTPUT> beanClass) throws SQLException {
+    coldStart();
     return new JdbcOperation<List<OUTPUT>>() {
       @Override
       protected List<OUTPUT> execute(Connection connection) throws SQLException {
@@ -195,6 +179,7 @@ public class Drowsy implements LifeCycle {
    *           if an error occurs
    */
   public <OUTPUT> OUTPUT write(Query query, JdbcFunction<ResultSet, OUTPUT> reader) throws SQLException {
+    coldStart();
     return new JdbcOperation<OUTPUT>() {
       @Override
       protected OUTPUT execute(Connection connection) throws SQLException {
@@ -227,6 +212,7 @@ public class Drowsy implements LifeCycle {
    *           if an error occurs
    */
   public <OUTPUT> List<OUTPUT> write(Query query, Class<OUTPUT> beanClass) throws SQLException {
+    coldStart();
     return write(query, rs -> {
       return mapper.map(rs, beanClass);
     });
@@ -242,6 +228,7 @@ public class Drowsy implements LifeCycle {
    *           if an error occurs
    */
   public int write(Query query) throws SQLException {
+    coldStart();
     return new JdbcOperation<Integer>() {
       @Override
       protected Integer execute(Connection connection) throws SQLException {
@@ -252,10 +239,10 @@ public class Drowsy implements LifeCycle {
   }
 
   /**
-   * Runs an arbitrary set of instructions over a JDBC connection with
-   * auto-commit disabled. The transaction will be commited afterwards or
-   * rollbacked on error. The connection and any JDBC resources created by the
-   * transaction code will be closed automatically.
+   * Runs an arbitrary set of instructions over a JDBC connection with auto-commit
+   * disabled. The transaction will be commited afterwards or rollbacked on error.
+   * The connection and any JDBC resources created by the transaction code will be
+   * closed automatically.
    * 
    * @param transaction
    *          the JDBC transaction's code
@@ -266,6 +253,7 @@ public class Drowsy implements LifeCycle {
    *           if an error occurs
    */
   public <OUTPUT> OUTPUT executeTransaction(JdbcFunction<Connection, OUTPUT> transaction) throws SQLException {
+    coldStart();
     return new JdbcTransaction<OUTPUT>() {
       @Override
       protected OUTPUT execute(Connection connection) throws SQLException {
