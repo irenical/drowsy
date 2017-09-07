@@ -1,6 +1,7 @@
 [![][maven img]][maven]
 [![][travis img]][travis]
 [![][codecov img]][codecov]
+[![][versioneye img]][versioneye]
 [![][codacy img]][codacy]
 
 # Drowsy
@@ -65,7 +66,7 @@ List<LegitPerson> got = drowsy.read(query, LegitPerson.class);
 ```
 
 ## Configuration
-DataSource configuration is as in [HikariCP](https://github.com/brettwooldridge/HikariCP), prefixed with jdbc. Plus two Flyway specific configurations.
+DataSource configuration is as in [HikariCP](https://github.com/brettwooldridge/HikariCP) plus two Flyway specific configurations, all prefixed with jdbc by default.
 ```properties
 jdbc.jdbcUrl=jdbc:postgresql://localhost:5432/MyDB
 jdbc.username=me
@@ -109,6 +110,10 @@ Drowsy uses [Jindy](https://github.com/irenical/jindy) for configuration, so a J
 
 [codecov]:https://codecov.io/gh/irenical/drowsy
 [codecov img]:https://codecov.io/gh/irenical/drowsy/branch/master/graph/badge.svg
+
+
+[versioneye]:https://www.versioneye.com/user/projects/59a9f6c30fb24f003e11d878
+[versioneye img]:https://www.versioneye.com/user/projects/59a9f6c30fb24f003e11d878/badge.svg?style=flat
 
 [codacy]:https://www.codacy.com/app/tiagosimao/drowsy?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=irenical/drowsy&amp;utm_campaign=Badge_Grade
 [codacy img]:https://api.codacy.com/project/badge/Grade/8a7f2277e24e4f619b13fb879c7c44b4
