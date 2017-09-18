@@ -5,12 +5,15 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.flywaydb.core.Flyway;
 import org.irenical.jindy.Config;
 import org.irenical.jindy.ConfigFactory;
+import org.irenical.jindy.PropertyChangedCallback;
 import org.irenical.lifecycle.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +65,8 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
   private static String FLYWAY_BYPASS = "flyway.bypass";
   private static String FLYWAY_BASELINE_VERSION = "flyway.baselineVersion";
   private static String FLYWAY_BASELINE_ON_MIGRATE = "flyway.baselineOnMigrate";
+  
+  private final List<String> registeredListeners = new LinkedList<>();
 
   private final Config config;
 
@@ -83,6 +88,7 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
 
   @Override
   public void stop() {
+    teardownConfigListeners();
     if (dataSource != null) {
       dataSource.close();
     }
@@ -220,14 +226,29 @@ public class DrowsyDataSource implements LifeCycle, DataSource {
             CONNECTIONTESTQUERY, INITIALIZATIONFAILTIMEOUT, ISOLATEINTERNALQUERIES, ALLOWPOOLSUSPENSION, READONLY,
             REGISTERMBEANS, CATALOG, CONNECTIONINITSQL, DRIVERCLASSNAME, TRANSACTIONISOLATION, LEAKDETECTIONTHRESHOLD,
             FLYWAY_BYPASS, FLYWAY_BASELINE_VERSION, FLYWAY_BASELINE_ON_MIGRATE)
-        .stream().forEach(p -> config.listen(p, this::onConnectionPropertyChanged));
+        .stream().forEach(p -> {
+          listen(config, p, this::onConnectionPropertyChanged);          
+        });
 
     // hot swappable
-    config.listen(MAXIMUMPOOLSIZE, p -> dataSource.setMaximumPoolSize(config.getInt(MAXIMUMPOOLSIZE, 10)));
-    config.listen(MINIMUMIDLE, p -> dataSource.setMinimumIdle(config.getInt(MINIMUMIDLE, 1)));
-    config.listen(IDLETIMEOUT, p -> dataSource.setIdleTimeout(config.getInt(IDLETIMEOUT, 600000)));
-    config.listen(MAXLIFETIME, p -> dataSource.setMaxLifetime(config.getInt(MAXLIFETIME, 1800000)));
-    config.listen(VALIDATIONTIMEOUT, p -> dataSource.setValidationTimeout(config.getInt(VALIDATIONTIMEOUT, 5000)));
+    listen(config, MAXIMUMPOOLSIZE, p -> dataSource.setMaximumPoolSize(config.getInt(MAXIMUMPOOLSIZE, 10)));
+    listen(config, MINIMUMIDLE, p -> dataSource.setMinimumIdle(config.getInt(MINIMUMIDLE, 1)));
+    listen(config, IDLETIMEOUT, p -> dataSource.setIdleTimeout(config.getInt(IDLETIMEOUT, 600000)));
+    listen(config, MAXLIFETIME, p -> dataSource.setMaxLifetime(config.getInt(MAXLIFETIME, 1800000)));
+    listen(config, VALIDATIONTIMEOUT, p -> dataSource.setValidationTimeout(config.getInt(VALIDATIONTIMEOUT, 5000)));
+  }
+  
+  
+  private void listen(Config config, String property, PropertyChangedCallback callback) {
+    String listenerId = config.listen(property, callback);
+    registeredListeners.add(listenerId);
+  }
+
+  private void teardownConfigListeners() {
+    for(String listenerId : registeredListeners) {
+      config.unListen(listenerId);
+    }
+    registeredListeners.clear();
   }
 
   private void onConnectionPropertyChanged(String prop) {
