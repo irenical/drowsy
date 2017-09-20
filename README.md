@@ -75,7 +75,16 @@ jdbc.password=hunter2
 
 # Whether or not to use Flyway, defaults to false
 jdbc.flyway.bypass=false
-#If set and Flyway is active, only updates greater that this will be applied, defaults to null
+
+# From Flyway's Javadoc:
+#  "Whether to automatically call baseline when migrate is executed
+#   against a non-empty schema with no metadata table
+#   This schema will then be baselined with the baselineVersion
+#   before executing the migrations.
+#   Only migrations above baselineVersion will then be applied.", defaults to false
+jdbc.flyway.baselineOnMigrate=true
+
+# If set and Flyway is active, only updates greater that this will be applied, defaults to null
 jdbc.flyway.baselineVersion=3
 ```
 
