@@ -9,7 +9,7 @@
 
   <groupId>org.irenical.drowsy</groupId>
   <artifactId>drowsy-parent</artifactId>
-  <version>0.1.13-SNAPSHOT</version>
+  <version>0.1.13</version>
 
   <name>Drowsy - Parent Project</name>
   <description>Another non-orm JDBC library</description>
@@ -20,7 +20,7 @@
     <connection>scm:git:git@github.com:irenical/drowsy.git</connection>
     <developerConnection>scm:git:git@github.com:irenical/drowsy.git</developerConnection>
     <url>git@github.com:irenical/drowsy.git</url>
-    <tag>HEAD</tag>
+    <tag>drowsy-parent-0.1.13</tag>
   </scm>
 
   <developers>
