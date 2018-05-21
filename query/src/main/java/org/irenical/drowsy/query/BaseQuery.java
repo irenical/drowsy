@@ -122,7 +122,6 @@ public class BaseQuery implements Query {
       } else {
         throw new IllegalArgumentException("Invalid parameter type for non-CallableStatement: " + value.getClass());
       }
-      ps.setString(idx, value.toString());
     } else {
       ps.setObject(idx, value);
     }
